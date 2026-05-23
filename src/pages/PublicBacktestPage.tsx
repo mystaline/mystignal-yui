@@ -1,19 +1,24 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { AnimatedChartContainer } from '@/motion/AnimatedChartContainer'
 import { EquityCurve } from '@/components/charts/EquityCurve'
 import { LoadingState } from '@/components/ui/LoadingState'
 import { useStaggerReady } from '@/hooks/useStaggerReady'
+import { usePublicBacktest } from '@/context/PublicBacktestContext'
 import { getPublicBacktest } from '@/lib/idb'
 import { formatIDR, formatNumber, formatDate } from '@/lib/utils'
 import type { PublicBacktestResult } from '@/types/backtest'
 
 export default function PublicBacktestPage() {
   const { workflowId = '' } = useParams<{ workflowId: string }>()
+  const { state } = usePublicBacktest()
   const [detail, setDetail] = useState<PublicBacktestResult | null>(null)
   const [loading, setLoading] = useState(true)
-  const chartReady = useStaggerReady(!loading && !!detail)
 
+  const isActiveJob = state.workflowId === workflowId
+  const inProgress = isActiveJob && !['idle', 'done', 'error', 'expired'].includes(state.phase)
+
+  // Read from IndexedDB on mount (covers returning to a past result)
   useEffect(() => {
     if (!workflowId) { setLoading(false); return }
     getPublicBacktest(workflowId).then(r => {
@@ -22,7 +27,32 @@ export default function PublicBacktestPage() {
     })
   }, [workflowId])
 
-  if (loading) return <div style={{ padding: 40 }}><LoadingState rows={8} /></div>
+  // When context finishes for this exact workflowId, populate result immediately
+  useEffect(() => {
+    if (isActiveJob && state.phase === 'done' && state.result) {
+      setDetail(state.result)
+      setLoading(false)
+    }
+  }, [isActiveJob, state.phase, state.result])
+
+  const chartReady = useStaggerReady(!loading && !!detail)
+
+  if (loading || inProgress) return (
+    <div style={{ padding: 40 }}>
+      <div className="pg-head">
+        <div>
+          <div className="eyebrow">Public Backtest · {workflowId.slice(-8)}</div>
+          <h1>Running<em>.</em></h1>
+        </div>
+      </div>
+      {inProgress && (
+        <div style={{ fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--ink-2)', marginBottom: 20 }}>
+          {state.label || 'Processing…'} — results will appear here automatically.
+        </div>
+      )}
+      <LoadingState rows={8} />
+    </div>
+  )
 
   if (!detail) return (
     <div style={{ padding: 40, maxWidth: 520 }}>
@@ -33,7 +63,7 @@ export default function PublicBacktestPage() {
         Backtest results are stored only in your browser. This result is not available — it may still be
         processing, or your browser data was cleared.
       </div>
-      <a href="/backtests/public/run" className="btn primary">Run new backtest</a>
+      <Link to="/backtests/run" className="btn primary">Run new backtest</Link>
     </div>
   )
 
@@ -49,7 +79,7 @@ export default function PublicBacktestPage() {
           <h1>Backtest Result<em>.</em></h1>
         </div>
         <div className="pg-actions">
-          <a href="/backtests/public/run" className="btn">+ New Run</a>
+          <Link to="/backtests/run" className="btn">+ New Run</Link>
         </div>
       </div>
 
@@ -130,9 +160,9 @@ export default function PublicBacktestPage() {
         <p style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)' }}>
           Simulation only — not financial advice. Past backtest performance does not guarantee future results.
         </p>
-        <a href="/backtests/public/run" style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--accent)' }}>
+        <Link to="/backtests/run" style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--accent)' }}>
           Run your own backtest →
-        </a>
+        </Link>
       </div>
     </div>
   )

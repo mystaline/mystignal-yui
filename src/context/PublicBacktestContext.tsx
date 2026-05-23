@@ -42,7 +42,12 @@ export function PublicBacktestProvider({ children }: { children: ReactNode }) {
     setState(IDLE)
   }, [])
 
-  useJobPoller<PublicBacktestResult>(state.workflowId, {
+  // Pass null to poller in terminal states so it stops polling,
+  // but keep workflowId in state so the page can match results.
+  const terminalPhases: BacktestJobPhase[] = ['idle', 'done', 'error', 'expired']
+  const pollWorkflowId = terminalPhases.includes(state.phase) ? null : state.workflowId
+
+  useJobPoller<PublicBacktestResult>(pollWorkflowId, {
     fetcher: getPublicBacktestJob,
     onPhase: (phase, label) => {
       setState(s => ({ ...s, phase: phase as BacktestJobPhase, label }))
@@ -51,13 +56,12 @@ export function PublicBacktestProvider({ children }: { children: ReactNode }) {
       const wfId = state.workflowId!
       savePublicBacktest(wfId, result).catch(() => {/* IndexedDB unavailable */})
       sessionStorage.removeItem(SESSION_KEY)
-      // workflowId: null stops the poller; toast stays visible for 6s then clears
-      setState({ phase: 'done', label: 'Done', workflowId: null, result })
+      setState(s => ({ ...s, phase: 'done', label: 'Done', result }))
       setTimeout(() => setState(IDLE), 6000)
     },
     onError: (message) => {
       sessionStorage.removeItem(SESSION_KEY)
-      setState(s => ({ ...s, phase: 'error', label: message, workflowId: null }))
+      setState(s => ({ ...s, phase: 'error', label: message }))
       setTimeout(() => setState(IDLE), 6000)
     },
   })
