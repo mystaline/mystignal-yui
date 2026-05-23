@@ -1,6 +1,6 @@
 import { apiClient } from './client'
 import type { PaginatedResponse } from '@/types/api'
-import type { BacktestDetailResponse, BacktestListItem, TradeFilter, TriggerBacktestRequest, TriggerBacktestResponse, TriggerPublicBacktestRequest } from '@/types/backtest'
+import type { BacktestDetailResponse, BacktestListItem, TradeFilter, TriggerBacktestRequest, TriggerBacktestResponse, TriggerPublicBacktestRequest, PublicBacktestJobResponse } from '@/types/backtest'
 import type { CandleDateRange } from './candles'
 
 export async function getBacktestList(page: number, pageSize: number, runType?: string): Promise<PaginatedResponse<BacktestListItem>> {
@@ -37,6 +37,10 @@ export async function triggerPublicBacktest(req: TriggerPublicBacktestRequest): 
 
 export async function getPublicBacktestDetail(id: string): Promise<BacktestDetailResponse> {
   return apiClient.publicGet<BacktestDetailResponse>(`/backtest/${id}`)
+}
+
+export async function getPublicBacktestJob(workflowId: string): Promise<PublicBacktestJobResponse> {
+  return apiClient.publicGet<PublicBacktestJobResponse>(`/backtest/job/${workflowId}`)
 }
 
 export async function getPublicCandleDateRange(): Promise<CandleDateRange> {

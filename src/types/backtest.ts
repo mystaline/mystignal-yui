@@ -145,6 +145,7 @@ export function isOpenTrade(t: BacktestTradeResponse): t is OpenTradeResponse {
 }
 
 export interface CapitalPoint {
+  period: number
   date: string
   capital: number
 }
@@ -154,6 +155,24 @@ export interface BacktestDetailResponse {
   aggregate: BacktestAggregate
   capitalHistory: CapitalPoint[]
   trades: BacktestTradeResponse[]
+}
+
+// Matches Go dto.PublicBacktestResult — aggregate + equity curve, no trades
+export interface PublicBacktestResult {
+  metadata: BacktestMetadata
+  aggregate: BacktestAggregate
+  capitalHistory: CapitalPoint[]
+}
+
+export type PublicJobStatus = 'queued' | 'running' | 'done' | 'failed' | 'expired'
+
+// Matches Go dto.PublicBacktestJobResponse
+export interface PublicBacktestJobResponse {
+  status: PublicJobStatus
+  phase?: string
+  label?: string
+  result?: PublicBacktestResult
+  error?: string
 }
 
 export interface TriggerBacktestRequest {

@@ -86,7 +86,7 @@ export const mockBacktestList: PaginatedResponse<BacktestListItem> = {
   totalPages: 1,
 }
 
-function generateDailyCapital(): { date: string; capital: number }[] {
+function generateDailyCapital(): { period: number; date: string; capital: number }[] {
   const result = []
   const start = new Date('2024-01-02')
   const end = new Date('2026-04-16')
@@ -101,7 +101,7 @@ function generateDailyCapital(): { date: string; capital: number }[] {
     if (dow !== 0 && dow !== 6) {
       const noise = 1 + (Math.random() - 0.46) * 0.018
       capital = Math.round(capital * dailyGrowthRate * noise)
-      result.push({ date: cur.toISOString().split('T')[0], capital })
+      result.push({ period: result.length + 1, date: cur.toISOString().split('T')[0], capital })
     }
     cur.setDate(cur.getDate() + 1)
   }
