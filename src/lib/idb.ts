@@ -20,7 +20,8 @@ async function getDB(): Promise<IDBPDatabase | null> {
         }
       },
     })
-  } catch {
+  } catch (err) {
+    console.warn('[idb] IndexedDB unavailable:', err)
     return null
   }
 }

@@ -87,7 +87,7 @@ interface TriggerBacktestFormProps {
 }
 
 export function TriggerBacktestForm({ onTriggered }: TriggerBacktestFormProps) {
-  const mode = getLiveKey() ? 'private' : 'public'
+  const mode: 'private' | 'public' = getLiveKey() ? 'private' : 'public'
   const privateMutation = useTriggerBacktest()
   const publicMutation  = useTriggerPublicBacktest()
   const { isPending, isSuccess, data } =

@@ -87,12 +87,15 @@ export function PublicBacktestToast() {
           {state.phase === 'done' && (
             <div style={{
               marginTop: 10, padding: '8px 10px',
-              background: 'rgba(74,222,128,.08)',
-              border: '1px solid rgba(74,222,128,.2)',
+              background: state.savedToBrowser ? 'rgba(74,222,128,.08)' : 'rgba(251,191,36,.08)',
+              border: `1px solid ${state.savedToBrowser ? 'rgba(74,222,128,.2)' : 'rgba(251,191,36,.2)'}`,
               borderRadius: 8,
-              fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--up)',
+              fontFamily: 'var(--mono)', fontSize: 12,
+              color: state.savedToBrowser ? 'var(--up)' : 'var(--warn, #f59e0b)',
             }}>
-              ✅ Result saved to your browser
+              {state.savedToBrowser
+                ? '✓ Result saved to your browser'
+                : '⚠ Result computed — storage unavailable'}
             </div>
           )}
 

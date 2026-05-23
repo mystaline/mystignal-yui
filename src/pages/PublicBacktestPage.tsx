@@ -18,22 +18,25 @@ export default function PublicBacktestPage() {
   const isActiveJob = state.workflowId === workflowId
   const inProgress = isActiveJob && !['idle', 'done', 'error', 'expired'].includes(state.phase)
 
-  // Read from IndexedDB on mount (covers returning to a past result)
+  // Read from IndexedDB on mount (covers returning to a past result).
+  // Only sets detail if context hasn't already provided it (avoids race where
+  // IDB resolves after context onDone and overwrites with undefined).
   useEffect(() => {
     if (!workflowId) { setLoading(false); return }
     getPublicBacktest(workflowId).then(r => {
-      setDetail(r ?? null)
+      setDetail(prev => prev ?? (r ?? null))
       setLoading(false)
     })
   }, [workflowId])
 
   // When context finishes for this exact workflowId, populate result immediately
+  // (before IDB write completes — result is in context state already).
   useEffect(() => {
     if (isActiveJob && state.phase === 'done' && state.result) {
       setDetail(state.result)
       setLoading(false)
     }
-  }, [isActiveJob, state.phase, state.result])
+  }, [workflowId, isActiveJob, state.phase, state.result])
 
   const chartReady = useStaggerReady(!loading && !!detail)
 

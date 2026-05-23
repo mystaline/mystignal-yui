@@ -111,6 +111,6 @@ export const apiClient = {
   delete: httpDelete,
   publicGet: httpPublicGet,
   publicPost: httpPublicPost,
-  get useMock() { return getLiveKey() === null },
+  get useMock() { return import.meta.env.VITE_MOCK === 'true' },
   mock: mockHandlers,
 }
