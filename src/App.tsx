@@ -1,7 +1,9 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AnalyzeProvider } from '@/context/AnalyzeContext'
+import { PublicBacktestProvider } from '@/context/PublicBacktestContext'
 import { AnalyzeProgressToast } from '@/components/ui/AnalyzeProgressToast'
+import { PublicBacktestToast } from '@/components/ui/PublicBacktestToast'
 import { AppShell } from '@/components/layout/AppShell'
 import DashboardPage from '@/pages/DashboardPage'
 import TradingJournalPage from '@/pages/TradingJournalPage'
@@ -27,22 +29,25 @@ export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <AnalyzeProvider>
-        <AnalyzeProgressToast />
-        <BrowserRouter>
-          <Routes>
-            <Route element={<AppShell />}>
-            <Route index element={<DashboardPage />} />
-            <Route path="trade" element={<TradingJournalPage />} />
-            <Route path="backtests" element={<BacktestListPage />} />
-            <Route path="backtests/run" element={<BacktestRunPage />} />
-            <Route path="backtests/public/run" element={<PublicBacktestRunPage />} />
-            <Route path="backtests/public/:id" element={<PublicBacktestPage />} />
-            <Route path="backtests/:id" element={<BacktestDetailPage />} />
-            <Route path="signals" element={<SignalsPage />} />
-            <Route path="candles" element={<CandlesPage />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+        <PublicBacktestProvider>
+          <AnalyzeProgressToast />
+          <PublicBacktestToast />
+          <BrowserRouter>
+            <Routes>
+              <Route element={<AppShell />}>
+                <Route index element={<DashboardPage />} />
+                <Route path="trade" element={<TradingJournalPage />} />
+                <Route path="backtests" element={<BacktestListPage />} />
+                <Route path="backtests/run" element={<BacktestRunPage />} />
+                <Route path="backtests/public/run" element={<PublicBacktestRunPage />} />
+                <Route path="backtests/public/:workflowId" element={<PublicBacktestPage />} />
+                <Route path="backtests/:id" element={<BacktestDetailPage />} />
+                <Route path="signals" element={<SignalsPage />} />
+                <Route path="candles" element={<CandlesPage />} />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </PublicBacktestProvider>
       </AnalyzeProvider>
     </QueryClientProvider>
   )

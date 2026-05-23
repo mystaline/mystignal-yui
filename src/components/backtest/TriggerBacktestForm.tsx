@@ -83,9 +83,10 @@ function parseCurrency(raw: string) {
 
 interface TriggerBacktestFormProps {
   mode?: 'private' | 'public'
+  onTriggered?: (workflowId: string) => void
 }
 
-export function TriggerBacktestForm({ mode = 'private' }: TriggerBacktestFormProps) {
+export function TriggerBacktestForm({ mode = 'private', onTriggered }: TriggerBacktestFormProps) {
   const privateMutation = useTriggerBacktest()
   const publicMutation  = useTriggerPublicBacktest()
   const { isPending, isSuccess, data } =
@@ -143,6 +144,12 @@ export function TriggerBacktestForm({ mode = 'private' }: TriggerBacktestFormPro
       }))
     }
   }, [dateRange])
+
+  useEffect(() => {
+    if (mode === 'public' && publicMutation.isSuccess && publicMutation.data?.workflowId) {
+      onTriggered?.(publicMutation.data.workflowId)
+    }
+  }, [mode, publicMutation.isSuccess, publicMutation.data, onTriggered])
 
   function set<K extends keyof typeof form>(key: K, value: typeof form[K]) {
     setForm(f => ({ ...f, [key]: value }))

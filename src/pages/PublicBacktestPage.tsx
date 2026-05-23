@@ -1,21 +1,39 @@
+import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AnimatedChartContainer } from '@/motion/AnimatedChartContainer'
 import { EquityCurve } from '@/components/charts/EquityCurve'
 import { LoadingState } from '@/components/ui/LoadingState'
-import { ErrorState } from '@/components/ui/ErrorState'
-import { usePublicBacktestDetail } from '@/hooks/usePublicBacktestDetail'
 import { useStaggerReady } from '@/hooks/useStaggerReady'
+import { getPublicBacktest } from '@/lib/idb'
 import { formatIDR, formatNumber, formatDate } from '@/lib/utils'
+import type { PublicBacktestResult } from '@/types/backtest'
 
 export default function PublicBacktestPage() {
-  const { id = '' } = useParams<{ id: string }>()
-  const { data: detail, isLoading, isError, refetch } = usePublicBacktestDetail(id)
-  const chartReady = useStaggerReady(!isLoading && !!detail)
+  const { workflowId = '' } = useParams<{ workflowId: string }>()
+  const [detail, setDetail] = useState<PublicBacktestResult | null>(null)
+  const [loading, setLoading] = useState(true)
+  const chartReady = useStaggerReady(!loading && !!detail)
 
-  if (isLoading) return <div style={{ padding: 40 }}><LoadingState rows={8} /></div>
-  if (isError || !detail) return (
-    <div style={{ padding: 40 }}>
-      <ErrorState message="Public backtest result not found or still running" onRetry={refetch} />
+  useEffect(() => {
+    if (!workflowId) { setLoading(false); return }
+    getPublicBacktest(workflowId).then(r => {
+      setDetail(r ?? null)
+      setLoading(false)
+    })
+  }, [workflowId])
+
+  if (loading) return <div style={{ padding: 40 }}><LoadingState rows={8} /></div>
+
+  if (!detail) return (
+    <div style={{ padding: 40, maxWidth: 520 }}>
+      <div className="pg-head">
+        <div><h1>Result Not Found<em>.</em></h1></div>
+      </div>
+      <div style={{ fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--ink-2)', marginBottom: 20 }}>
+        Backtest results are stored only in your browser. This result is not available — it may still be
+        processing, or your browser data was cleared.
+      </div>
+      <a href="/backtests/public/run" className="btn primary">Run new backtest</a>
     </div>
   )
 
@@ -27,7 +45,7 @@ export default function PublicBacktestPage() {
     <div>
       <div className="pg-head">
         <div>
-          <div className="eyebrow">Public Backtest · Run #{m.id}</div>
+          <div className="eyebrow">Public Backtest · {workflowId.slice(-8)}</div>
           <h1>Backtest Result<em>.</em></h1>
         </div>
         <div className="pg-actions">

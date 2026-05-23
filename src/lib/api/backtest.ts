@@ -35,10 +35,6 @@ export async function triggerPublicBacktest(req: TriggerPublicBacktestRequest): 
   return apiClient.publicPost<TriggerBacktestResponse>('/backtest', req)
 }
 
-export async function getPublicBacktestDetail(id: string): Promise<BacktestDetailResponse> {
-  return apiClient.publicGet<BacktestDetailResponse>(`/backtest/${id}`)
-}
-
 export async function getPublicBacktestJob(workflowId: string): Promise<PublicBacktestJobResponse> {
   return apiClient.publicGet<PublicBacktestJobResponse>(`/backtest/job/${workflowId}`)
 }

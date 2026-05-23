@@ -1,6 +1,16 @@
+import { useNavigate } from 'react-router-dom'
+import { usePublicBacktest } from '@/context/PublicBacktestContext'
 import { TriggerBacktestForm } from '@/components/backtest/TriggerBacktestForm'
 
 export default function PublicBacktestRunPage() {
+  const { start } = usePublicBacktest()
+  const navigate = useNavigate()
+
+  function handleTriggered(workflowId: string) {
+    start(workflowId)
+    navigate(`/backtests/public/${workflowId}`)
+  }
+
   return (
     <div>
       <div className="pg-head">
@@ -9,7 +19,6 @@ export default function PublicBacktestRunPage() {
           <h1>Strategy Simulator<em>.</em></h1>
         </div>
       </div>
-
       <div style={{ padding: '40px', maxWidth: 680 }}>
         <div style={{
           fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)',
@@ -18,9 +27,10 @@ export default function PublicBacktestRunPage() {
           borderRadius: 6, padding: '10px 14px', marginBottom: 24,
         }}>
           No API key required — configure your own indicator weights and run a free backtest on live IDX data.
+          Results are stored only in your browser.
         </div>
         <div className="neon-card">
-          <TriggerBacktestForm mode="public" />
+          <TriggerBacktestForm mode="public" onTriggered={handleTriggered} />
         </div>
       </div>
     </div>
