@@ -1,0 +1,76 @@
+/* Semantic CSS Classes — Extracted Reusable Patterns */
+/* Use these instead of inline styles when patterns repeat across components */
+
+/* Form/Panel Labels */
+.form-label {
+  display: block;
+  font-size: 11px;
+  color: var(--ink-2);
+  margin-bottom: 4px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* Form Input Fields */
+.form-input {
+  width: 100%;
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 12px;
+  color: var(--ink);
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.form-input:focus {
+  border-color: var(--accent);
+}
+
+/* Section Containers */
+.form-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--bg);
+}
+
+/* Form Rows */
+.form-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.form-row > * {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Card/Panel Base */
+.card {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px rgba(198, 255, 61, 0.1);
+}
+
+/* Status/Badge Base */
+.badge-base {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+}
