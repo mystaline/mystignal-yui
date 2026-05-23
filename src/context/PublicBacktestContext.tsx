@@ -51,12 +51,13 @@ export function PublicBacktestProvider({ children }: { children: ReactNode }) {
       const wfId = state.workflowId!
       savePublicBacktest(wfId, result).catch(() => {/* IndexedDB unavailable */})
       sessionStorage.removeItem(SESSION_KEY)
-      setState({ phase: 'done', label: 'Done', workflowId: wfId, result })
+      // workflowId: null stops the poller; toast stays visible for 6s then clears
+      setState({ phase: 'done', label: 'Done', workflowId: null, result })
       setTimeout(() => setState(IDLE), 6000)
     },
     onError: (message) => {
       sessionStorage.removeItem(SESSION_KEY)
-      setState(s => ({ ...s, phase: 'error', label: message }))
+      setState(s => ({ ...s, phase: 'error', label: message, workflowId: null }))
       setTimeout(() => setState(IDLE), 6000)
     },
   })
