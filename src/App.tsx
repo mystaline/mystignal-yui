@@ -10,7 +10,6 @@ import TradingJournalPage from '@/pages/TradingJournalPage'
 import BacktestListPage from '@/pages/BacktestListPage'
 import BacktestDetailPage from '@/pages/BacktestDetailPage'
 import BacktestRunPage from '@/pages/BacktestRunPage'
-import PublicBacktestRunPage from '@/pages/PublicBacktestRunPage'
 import PublicBacktestPage from '@/pages/PublicBacktestPage'
 import SignalsPage from '@/pages/SignalsPage'
 import CandlesPage from '@/pages/CandlesPage'
@@ -39,7 +38,6 @@ export default function App() {
                 <Route path="trade" element={<TradingJournalPage />} />
                 <Route path="backtests" element={<BacktestListPage />} />
                 <Route path="backtests/run" element={<BacktestRunPage />} />
-                <Route path="backtests/public/run" element={<PublicBacktestRunPage />} />
                 <Route path="backtests/public/:workflowId" element={<PublicBacktestPage />} />
                 <Route path="backtests/:id" element={<BacktestDetailPage />} />
                 <Route path="signals" element={<SignalsPage />} />

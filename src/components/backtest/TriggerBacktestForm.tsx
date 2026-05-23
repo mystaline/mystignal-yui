@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from 'react'
 import { motion } from 'framer-motion'
 import { Zap } from 'lucide-react'
+import { getLiveKey } from '@/lib/api/client'
 import { useTriggerBacktest } from '@/hooks/useTriggerBacktest'
 import { useTriggerPublicBacktest } from '@/hooks/useTriggerPublicBacktest'
 import { useCandleDateRange } from '@/hooks/useCandleDateRange'
@@ -82,11 +83,11 @@ function parseCurrency(raw: string) {
 }
 
 interface TriggerBacktestFormProps {
-  mode?: 'private' | 'public'
   onTriggered?: (workflowId: string) => void
 }
 
-export function TriggerBacktestForm({ mode = 'private', onTriggered }: TriggerBacktestFormProps) {
+export function TriggerBacktestForm({ onTriggered }: TriggerBacktestFormProps) {
+  const mode = getLiveKey() ? 'private' : 'public'
   const privateMutation = useTriggerBacktest()
   const publicMutation  = useTriggerPublicBacktest()
   const { isPending, isSuccess, data } =

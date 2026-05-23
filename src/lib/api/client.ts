@@ -20,8 +20,10 @@ export class ApiError extends Error {
   }
 })()
 
-// Computed once at module load — stable for the entire session.
-const LIVE_KEY = sessionStorage.getItem(KEY_STORAGE)
+// Read live each call so DevTools key changes take effect on next render/request.
+export function getLiveKey(): string | null {
+  return sessionStorage.getItem(KEY_STORAGE)
+}
 
 async function httpGet<T>(path: string, params?: Record<string, unknown>): Promise<T> {
   const url = new URL(`${BASE_URL}/api/v1${path}`)
@@ -30,7 +32,8 @@ async function httpGet<T>(path: string, params?: Record<string, unknown>): Promi
       if (v !== undefined && v !== '') url.searchParams.set(k, String(v))
     })
   }
-  const headers: HeadersInit = LIVE_KEY ? { 'X-API-Key': LIVE_KEY } : {}
+  const key = getLiveKey()
+  const headers: HeadersInit = key ? { 'X-API-Key': key } : {}
   const res = await fetch(url.toString(), { headers })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ code: 'UNKNOWN', message: 'Request failed' }))
@@ -40,9 +43,10 @@ async function httpGet<T>(path: string, params?: Record<string, unknown>): Promi
 }
 
 async function httpPost<T>(path: string, body: unknown): Promise<T> {
+  const key = getLiveKey()
   const headers: HeadersInit = {
     'Content-Type': 'application/json',
-    ...(LIVE_KEY ? { 'X-API-Key': LIVE_KEY } : {}),
+    ...(key ? { 'X-API-Key': key } : {}),
   }
   const res = await fetch(`${BASE_URL}/api/v1${path}`, {
     method: 'POST',
@@ -85,7 +89,8 @@ async function httpPublicPost<T>(path: string, body: unknown): Promise<T> {
 }
 
 async function httpDelete(path: string): Promise<void> {
-  const headers: HeadersInit = LIVE_KEY ? { 'X-API-Key': LIVE_KEY } : {}
+  const key = getLiveKey()
+  const headers: HeadersInit = key ? { 'X-API-Key': key } : {}
   const res = await fetch(`${BASE_URL}/api/v1${path}`, { method: 'DELETE', headers })
   if (!res.ok) {
     const err = await res.json().catch(() => ({ code: 'UNKNOWN', message: 'Request failed' }))
@@ -94,7 +99,8 @@ async function httpDelete(path: string): Promise<void> {
 }
 
 export function getAuthHeaders(): Record<string, string> {
-  return LIVE_KEY ? { 'X-API-Key': LIVE_KEY } : {}
+  const key = getLiveKey()
+  return key ? { 'X-API-Key': key } : {}
 }
 
 export { BASE_URL }
@@ -105,6 +111,6 @@ export const apiClient = {
   delete: httpDelete,
   publicGet: httpPublicGet,
   publicPost: httpPublicPost,
-  useMock: LIVE_KEY === null,
+  get useMock() { return getLiveKey() === null },
   mock: mockHandlers,
 }

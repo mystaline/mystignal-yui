@@ -1,8 +1,15 @@
 import { useNavigate } from 'react-router-dom'
+import { usePublicBacktest } from '@/context/PublicBacktestContext'
 import { TriggerBacktestForm } from '@/components/backtest/TriggerBacktestForm'
 
 export default function BacktestRunPage() {
   const navigate = useNavigate()
+  const { start } = usePublicBacktest()
+
+  function handleTriggered(workflowId: string) {
+    start(workflowId)
+    navigate(`/backtests/public/${workflowId}`)
+  }
 
   return (
     <div>
@@ -17,7 +24,7 @@ export default function BacktestRunPage() {
 
       <div style={{ padding: '40px', maxWidth: 680 }}>
         <div className="neon-card">
-          <TriggerBacktestForm />
+          <TriggerBacktestForm onTriggered={handleTriggered} />
         </div>
       </div>
     </div>
