@@ -1,6 +1,7 @@
 {
   "name": "mystignal-yui",
   "version": "0.1.0",
+  "description": "Trading signal backtesting platform — analysis, journaling, and market data",
   "type": "module",
   "scripts": {
     "dev": "vite",
