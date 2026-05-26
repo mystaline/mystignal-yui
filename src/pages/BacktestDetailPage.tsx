@@ -43,8 +43,8 @@ export default function BacktestDetailPage() {
   const { data: tradesData, isLoading: tradesLoading } = useBacktestTrades(id, tradePage, TRADES_PAGE_SIZE, tradeFilter)
   const chartReady = useStaggerReady(!isLoading && !!detail)
 
-  if (isLoading) return <div style={{ padding: 40 }}><LoadingState rows={8} /></div>
-  if (isError || !detail) return <div style={{ padding: 40 }}><ErrorState message="Backtest not found" onRetry={refetch} /></div>
+  if (isLoading) return <div style={{ padding: '2.5rem' }}><LoadingState rows={8} /></div>
+  if (isError || !detail) return <div style={{ padding: '2.5rem' }}><ErrorState message="Backtest not found" onRetry={refetch} /></div>
 
   const m = detail.metadata
   const a = detail.aggregate
@@ -116,12 +116,12 @@ export default function BacktestDetailPage() {
         </div>
         <div className="k">
           <div className="l">Avg Win</div>
-          <div className="v" style={{ color: 'var(--up)', fontSize: 22 }}>{formatIDR(a.avgWin)}</div>
+          <div className="v" style={{ color: 'var(--up)', fontSize: '1.375rem' }}>{formatIDR(a.avgWin)}</div>
           <div className="s">Best {formatIDR(a.largestWin)}</div>
         </div>
         <div className="k">
           <div className="l">Avg Loss</div>
-          <div className="v" style={{ color: 'var(--down)', fontSize: 22 }}>{formatIDR(Math.abs(a.avgLoss))}</div>
+          <div className="v" style={{ color: 'var(--down)', fontSize: '1.375rem' }}>{formatIDR(Math.abs(a.avgLoss))}</div>
           <div className="s">Worst {formatIDR(Math.abs(a.largestLoss))}</div>
         </div>
       </div>
@@ -175,7 +175,7 @@ export default function BacktestDetailPage() {
             <table className="tt">
               <thead>
                 <tr>
-                  <th style={{ width: 36 }}>№</th>
+                  <th style={{ width: '2.25rem' }}>№</th>
                   <th>Symbol</th>
                   <th>Entry Time</th>
                   <th className="num">Lot</th>
@@ -191,7 +191,7 @@ export default function BacktestDetailPage() {
                     <tr key={t.id}>
                       <td className="dim">{String(i + 1).padStart(2, '0')}</td>
                       <td className="sym">{t.symbol}</td>
-                      <td className="dim mono" style={{ fontSize: 11 }}>{formatDateTime(t.entryTime)}</td>
+                      <td className="dim mono" style={{ fontSize: '0.6875rem' }}>{formatDateTime(t.entryTime)}</td>
                       <td className="num dim">{t.lot}</td>
                       <PnlCell amount={t.profitAmount} pct={t.profitPercentage} isOpen={isOpen} />
                       <td><TradeStatusBadge status={t.status} /></td>
@@ -207,7 +207,7 @@ export default function BacktestDetailPage() {
                 <div style={{ overflowX: 'auto' }}><table className="tt">
                   <thead>
                     <tr>
-                      <th style={{ width: 36 }}>№</th>
+                      <th style={{ width: '2.25rem' }}>№</th>
                       <th>Symbol</th>
                       <th>Lot</th>
                       <th>Entry Time</th>
@@ -237,8 +237,8 @@ export default function BacktestDetailPage() {
                           <td className="dim">{String((tradePage - 1) * TRADES_PAGE_SIZE + i + 1).padStart(2, '0')}</td>
                           <td className="sym">{t.symbol}</td>
                           <td className="num dim">{t.lot}L</td>
-                          <td className="dim mono" style={{ fontSize: 11 }}>{formatDateTime(t.entryTime)}</td>
-                          <td className="dim mono" style={{ fontSize: 11 }}>{t.exitTime ? formatDateTime(t.exitTime) : '—'}</td>
+                          <td className="dim mono" style={{ fontSize: '0.6875rem' }}>{formatDateTime(t.entryTime)}</td>
+                          <td className="dim mono" style={{ fontSize: '0.6875rem' }}>{t.exitTime ? formatDateTime(t.exitTime) : '—'}</td>
                           <td className="num dim">{formatIDR(t.entryPrice)}</td>
                           <td className="num dim">{isOpen ? <span className="dim">MTM {formatIDR(t.exitPrice)}</span> : formatIDR(t.exitPrice)}</td>
                           <td className="num" style={{ color: 'var(--up)', opacity: 0.7 }}>{formatIDR(t.targetPrice)}</td>
@@ -247,7 +247,7 @@ export default function BacktestDetailPage() {
                           <td className="num dim">{mktDays}d</td>
                           <td className="num dim">{calDays !== null ? `${calDays}d` : '—'}</td>
                           <td className="num dim">{t.confidence.toFixed(0)}%</td>
-                          <td className="dim" style={{ maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={t.reason}>{t.reason || '—'}</td>
+                          <td className="dim" style={{ maxWidth: '8.75rem', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={t.reason}>{t.reason || '—'}</td>
                           <td><TradeStatusBadge status={t.status} /></td>
                         </tr>
                       )
@@ -255,7 +255,7 @@ export default function BacktestDetailPage() {
                   </tbody>
                 </table></div>
                 {tradesData.totalPages > 1 && (
-                  <div style={{ marginTop: 16 }}>
+                  <div style={{ marginTop: '1rem' }}>
                     <Pagination page={tradePage} totalPages={tradesData.totalPages} total={tradesData.total} pageSize={TRADES_PAGE_SIZE} onPageChange={setTradePage} />
                   </div>
                 )}

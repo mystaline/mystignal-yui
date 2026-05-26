@@ -8,32 +8,32 @@ interface Props {
 const LABEL: React.CSSProperties = {
   display: 'block',
   fontFamily: 'var(--mono)',
-  fontSize: 10,
+  fontSize: '0.8125rem',
   fontWeight: 600,
-  letterSpacing: '0.12em',
+  letterSpacing: '0.08em',
   textTransform: 'uppercase',
   color: 'var(--ink-3)',
-  marginBottom: 6,
+  marginBottom: '0.375rem',
 }
 
 const INDICATOR_CARD: React.CSSProperties = {
   border: '1px solid var(--line)',
-  borderRadius: 8,
-  padding: '14px 16px',
-  marginBottom: 12,
+  borderRadius: '0.5rem',
+  padding: '0.875rem 1rem',
+  marginBottom: '0.75rem',
 }
 
 const INDICATOR_HEADER: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  marginBottom: 12,
+  marginBottom: '0.75rem',
 }
 
 const GRID2: React.CSSProperties = {
   display: 'grid',
   gridTemplateColumns: '1fr 1fr',
-  gap: '12px 16px',
+  gap: '0.75rem 1rem',
 }
 
 function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
@@ -44,14 +44,17 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
       aria-checked={checked}
       onClick={() => onChange(!checked)}
       style={{
-        width: 40, height: 22, borderRadius: 11, border: 'none', cursor: 'pointer',
+        width: '2.5rem', height: '1.375rem', borderRadius: '0.6875rem',
+        border: 'none', cursor: 'pointer',
         background: checked ? 'var(--accent)' : 'var(--line)',
         position: 'relative', flexShrink: 0, transition: 'background 0.2s',
       }}
     >
       <span style={{
-        position: 'absolute', top: 3, left: checked ? 21 : 3,
-        width: 16, height: 16, borderRadius: '50%',
+        position: 'absolute',
+        top: '0.1875rem',
+        left: checked ? '1.3125rem' : '0.1875rem',
+        width: '1rem', height: '1rem', borderRadius: '50%',
         background: checked ? 'var(--accent-ink)' : 'var(--ink-2)',
         transition: 'left 0.2s',
       }} />
@@ -60,10 +63,10 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
 }
 
 function NumberInput({
-  value, onChange, min, max, step, width = 80,
+  value, onChange, min, max, step, width = '5rem',
 }: {
   value: number; onChange: (v: number) => void
-  min?: number; max?: number; step?: number; width?: number
+  min?: number; max?: number; step?: number; width?: string
 }) {
   return (
     <input
@@ -103,9 +106,9 @@ export function GenericStrategyPanel({ value: cfg, onChange }: Props) {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
         <div style={{ ...LABEL, marginBottom: 0 }}>Strategy Indicators</div>
-        <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: tw > 0 ? 'var(--accent)' : 'var(--down)' }}>
+        <div style={{ fontFamily: 'var(--mono)', fontSize: '0.75rem', color: tw > 0 ? 'var(--accent)' : 'var(--down)' }}>
           total weight: {tw.toFixed(2)}
         </div>
       </div>
@@ -117,8 +120,8 @@ export function GenericStrategyPanel({ value: cfg, onChange }: Props) {
       }}>
         <div style={INDICATOR_HEADER}>
           <div>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, color: 'var(--ink)' }}>RSI</span>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-3)', marginLeft: 8 }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: '0.875rem', fontWeight: 700, color: 'var(--ink)' }}>RSI</span>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: '0.75rem', color: 'var(--ink-3)', marginLeft: '0.5rem' }}>
               Oversold momentum
             </span>
           </div>
@@ -149,8 +152,8 @@ export function GenericStrategyPanel({ value: cfg, onChange }: Props) {
       }}>
         <div style={INDICATOR_HEADER}>
           <div>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, color: 'var(--ink)' }}>EMA Crossover</span>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-3)', marginLeft: 8 }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: '0.875rem', fontWeight: 700, color: 'var(--ink)' }}>EMA Crossover</span>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: '0.75rem', color: 'var(--ink-3)', marginLeft: '0.5rem' }}>
               Trend direction
             </span>
           </div>
@@ -181,8 +184,8 @@ export function GenericStrategyPanel({ value: cfg, onChange }: Props) {
       }}>
         <div style={INDICATOR_HEADER}>
           <div>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, color: 'var(--ink)' }}>Volume Spike</span>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-3)', marginLeft: 8 }}>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: '0.875rem', fontWeight: 700, color: 'var(--ink)' }}>Volume Spike</span>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: '0.75rem', color: 'var(--ink-3)', marginLeft: '0.5rem' }}>
               Breakout confirmation
             </span>
           </div>
@@ -202,13 +205,13 @@ export function GenericStrategyPanel({ value: cfg, onChange }: Props) {
         )}
       </div>
 
-      {/* ATR Filter (gate, not scored) */}
-      <div style={{ ...INDICATOR_CARD, marginBottom: 20 }}>
+      {/* ATR Filter */}
+      <div style={{ ...INDICATOR_CARD, marginBottom: '1.25rem' }}>
         <div style={INDICATOR_HEADER}>
           <div>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: 12, fontWeight: 700, color: 'var(--ink)' }}>ATR Volatility Gate</span>
-            <span style={{ fontFamily: 'var(--mono)', fontSize: 10, color: 'var(--ink-3)', marginLeft: 8 }}>
-              Skip low-vol stocks (unscored filter)
+            <span style={{ fontFamily: 'var(--mono)', fontSize: '0.875rem', fontWeight: 700, color: 'var(--ink)' }}>ATR Volatility Gate</span>
+            <span style={{ fontFamily: 'var(--mono)', fontSize: '0.75rem', color: 'var(--ink-3)', marginLeft: '0.5rem' }}>
+              Skip low-vol stocks (unscored)
             </span>
           </div>
           <Toggle checked={cfg.atrFilter.enabled} onChange={v => patchAtrFilter({ enabled: v })} />
@@ -221,18 +224,18 @@ export function GenericStrategyPanel({ value: cfg, onChange }: Props) {
             </div>
             <div>
               <label style={LABEL}>Min ATR %</label>
-              <NumberInput value={cfg.atrFilter.minAtrPct} onChange={v => patchAtrFilter({ minAtrPct: v })} min={0.001} max={0.1} step={0.001} width={100} />
+              <NumberInput value={cfg.atrFilter.minAtrPct} onChange={v => patchAtrFilter({ minAtrPct: v })} min={0.001} max={0.1} step={0.001} width="6.25rem" />
             </div>
           </div>
         )}
       </div>
 
-      {/* SL/TP multipliers */}
-      <div style={{ borderTop: '1px solid var(--line)', paddingTop: 16 }}>
-        <div style={{ fontFamily: 'var(--mono)', fontSize: 10, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--ink-3)', marginBottom: 12 }}>
+      {/* Risk Parameters */}
+      <div style={{ borderTop: '1px solid var(--line)', paddingTop: '1rem' }}>
+        <div style={{ fontFamily: 'var(--mono)', fontSize: '0.8125rem', fontWeight: 700, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--ink-3)', marginBottom: '0.875rem' }}>
           Risk Parameters
         </div>
-        <div style={{ ...GRID2, marginBottom: 16 }}>
+        <div style={{ ...GRID2 }}>
           <div>
             <label style={LABEL}>SL multiplier (× ATR)</label>
             <NumberInput value={cfg.slMultiplier} onChange={v => onChange({ ...cfg, slMultiplier: v })} min={0.5} max={10} step={0.5} />
@@ -241,22 +244,22 @@ export function GenericStrategyPanel({ value: cfg, onChange }: Props) {
             <label style={LABEL}>TP multiplier (× ATR)</label>
             <NumberInput value={cfg.tpMultiplier} onChange={v => onChange({ ...cfg, tpMultiplier: v })} min={0.5} max={20} step={0.5} />
           </div>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div>
             <label style={LABEL}>Hold days limit</label>
             <NumberInput value={cfg.holdDays} onChange={v => onChange({ ...cfg, holdDays: v })} min={1} max={60} />
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6, marginTop: 16 }}>
-            <label style={LABEL}>Trailing stop</label>
-            <Toggle checked={cfg.useTrailingStop} onChange={v => onChange({ ...cfg, useTrailingStop: v })} />
-          </div>
-          {cfg.useTrailingStop && (
-            <div>
-              <label style={LABEL}>Trail %</label>
-              <NumberInput value={cfg.trailingStopPct} onChange={v => onChange({ ...cfg, trailingStopPct: v })} min={0.5} max={10} step={0.5} />
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+              <label style={{ ...LABEL, marginBottom: 0 }}>Trailing stop</label>
+              <Toggle checked={cfg.useTrailingStop} onChange={v => onChange({ ...cfg, useTrailingStop: v })} />
             </div>
-          )}
+            {cfg.useTrailingStop && (
+              <>
+                <label style={LABEL}>Trail %</label>
+                <NumberInput value={cfg.trailingStopPct} onChange={v => onChange({ ...cfg, trailingStopPct: v })} min={0.5} max={10} step={0.5} />
+              </>
+            )}
+          </div>
         </div>
       </div>
     </div>

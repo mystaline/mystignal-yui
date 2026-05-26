@@ -12,9 +12,9 @@ export function BacktestGridRow({ backtest, rank, onDelete }: Props) {
   const isProfit = backtest.profitPercentage >= 0
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px', borderBottom: '1px solid var(--line)' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', borderBottom: '1px solid var(--line)' }}>
       {/* Rank */}
-      <div style={{ minWidth: 40, fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}>
+      <div style={{ minWidth: '2.5rem', fontFamily: 'var(--mono)', fontSize: '0.8125rem', fontWeight: 600, color: 'var(--ink-2)' }}>
         #{rank}
       </div>
 
@@ -22,9 +22,9 @@ export function BacktestGridRow({ backtest, rank, onDelete }: Props) {
       <Link
         to={ROUTES.backtests.detail(backtest.id)}
         style={{
-          minWidth: 60,
+          minWidth: '3.75rem',
           fontFamily: 'var(--mono)',
-          fontSize: 13,
+          fontSize: '0.8125rem',
           fontWeight: 600,
           color: 'var(--accent)',
           textDecoration: 'none',
@@ -35,27 +35,27 @@ export function BacktestGridRow({ backtest, rank, onDelete }: Props) {
       </Link>
 
       {/* Strategy */}
-      <div style={{ minWidth: 100, fontSize: 12, color: 'var(--ink)' }}>
+      <div style={{ minWidth: '6.25rem', fontSize: '0.75rem', color: 'var(--ink)' }}>
         {backtest.strategyName}
       </div>
 
       {/* Profit % */}
-      <div style={{ minWidth: 70, fontSize: 12, color: isProfit ? 'var(--up)' : 'var(--down)', fontWeight: 600 }}>
+      <div style={{ minWidth: '4.375rem', fontSize: '0.75rem', color: isProfit ? 'var(--up)' : 'var(--down)', fontWeight: 600 }}>
         {isProfit ? '+' : ''}{backtest.profitPercentage.toFixed(2)}%
       </div>
 
       {/* Total Trades */}
-      <div style={{ minWidth: 70, fontSize: 11, color: 'var(--ink-3)' }}>
+      <div style={{ minWidth: '4.375rem', fontSize: '0.6875rem', color: 'var(--ink-3)' }}>
         {backtest.totalTrades} trades
       </div>
 
       {/* Sharpe */}
-      <div style={{ minWidth: 60, fontSize: 11, color: 'var(--ink-3)' }}>
+      <div style={{ minWidth: '3.75rem', fontSize: '0.6875rem', color: 'var(--ink-3)' }}>
         {(backtest.sharpeRatio ?? 0).toFixed(2)}
       </div>
 
       {/* Max Drawdown */}
-      <div style={{ minWidth: 80, fontSize: 11, color: 'var(--down)' }}>
+      <div style={{ minWidth: '5rem', fontSize: '0.6875rem', color: 'var(--down)' }}>
         {(backtest.maxDrawdown * 100).toFixed(2)}%
       </div>
 
@@ -69,7 +69,7 @@ export function BacktestGridRow({ backtest, rank, onDelete }: Props) {
             border: 'none',
             color: 'var(--down)',
             cursor: 'pointer',
-            fontSize: 12,
+            fontSize: '0.75rem',
             opacity: 0.7,
           }}
         >

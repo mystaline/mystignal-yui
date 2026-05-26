@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiClient } from "@/lib/api/client";
+import { useQueryClient } from "@tanstack/react-query";
+import { getLiveKey } from "@/lib/api/client";
 import { useBacktests } from "@/hooks/useBacktests";
+import { usePublicBacktests } from "@/hooks/usePublicBacktests";
 import { LoadingState } from "@/components/ui/LoadingState";
 import { ErrorState } from "@/components/ui/ErrorState";
 import { Pagination } from "@/components/ui/Pagination";
 import { formatNumber, formatDate } from "@/lib/utils";
+import { deletePublicBacktest } from "@/lib/idb";
+import { queryKeys } from "@/lib/query-keys";
+import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import type { BacktestListItem } from "@/types/backtest";
 
 const TIMEFRAMES = ["All", "5m", "15m", "1h", "4h", "1d"];
@@ -107,12 +112,10 @@ function ManualRow({
 function GridRow({
   b,
   rank,
-  showParams,
   onNavigate,
 }: {
   b: BacktestListItem;
   rank: number;
-  showParams: boolean;
   onNavigate: (id: string) => void;
 }) {
   const up = b.profitPercentage >= 0;
@@ -136,7 +139,7 @@ function GridRow({
         : (p.entryTiming ?? "—");
 
   return (
-    <div className={`gs-row${showParams ? " with-params" : ""}`} onClick={() => onNavigate(b.id)}>
+    <div className="gs-row with-params" onClick={() => onNavigate(b.id)}>
       <div className={`gs-rank ${rank <= 3 ? "top" : ""}`}>#{rank}</div>
       <div className="gs-date">
         {formatDate(b.startDate)} → {formatDate(b.endDate)}
@@ -145,14 +148,12 @@ function GridRow({
         {up ? "+" : ""}
         {b.profitPercentage.toFixed(1)}%
       </div>
-      {showParams && (
-        <div className="gs-params">
+      <div className="gs-params">
           <span className="gs-tag">ATR {atrPct}</span>
           <span className="gs-tag">Cap {capPct}</span>
           <span className="gs-tag">{index}</span>
           <span className="gs-tag">{timing}</span>
         </div>
-      )}
       <div className="gs-metrics">
         <span>
           <span className="k">WR</span>
@@ -176,11 +177,28 @@ type Tab = "manual" | "grid_search";
 
 export default function BacktestListPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const authed = !!getLiveKey();
+
+  function handleDeletePublic(e: React.MouseEvent, workflowId: string) {
+    e.stopPropagation();
+    setConfirmDelete(workflowId);
+  }
+
+  async function confirmDeletePublic() {
+    if (!confirmDelete) return;
+    await deletePublicBacktest(confirmDelete);
+    queryClient.invalidateQueries({ queryKey: queryKeys.publicBacktests.list });
+    setConfirmDelete(null);
+  }
   const [tab, setTab] = useState<Tab>("manual");
   const [page, setPage] = useState(1);
   const [tf, setTf] = useState("All");
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null); // workflowId to delete
+  const [confirmClearAll, setConfirmClearAll] = useState(false);
 
   const { data, isLoading, isError, refetch } = useBacktests(page, 20, tab);
+  const { data: idbItems = [], isLoading: idbLoading } = usePublicBacktests();
 
   const items = data?.data ?? [];
   const filtered =
@@ -208,12 +226,122 @@ export default function BacktestListPage() {
     ? Math.max(...items.map((b) => b.profitFactor ?? 0))
     : 0;
 
-  const showParams = !apiClient.useMock;
 
   const handleTabChange = (t: Tab) => {
     setTab(t);
     setPage(1);
   };
+
+  async function confirmClearAllPublic() {
+    await Promise.all(idbItems.map((item) => deletePublicBacktest(item.workflowId)));
+    queryClient.invalidateQueries({ queryKey: queryKeys.publicBacktests.list });
+    setConfirmClearAll(false);
+  }
+
+  if (!authed) {
+    return (
+      <div>
+        <div className="pg-head">
+          <div>
+            <div className="eyebrow">Saved in this browser · {idbItems.length} run{idbItems.length !== 1 ? "s" : ""}</div>
+            <h1>Backtests<em>.</em></h1>
+          </div>
+          <div className="pg-actions">
+            {idbItems.length > 0 && (
+              <button
+                className="btn"
+                onClick={() => setConfirmClearAll(true)}
+                style={{ color: "var(--down)", borderColor: "rgba(239,68,68,.3)" }}
+              >
+                Clear All
+              </button>
+            )}
+            <button className="btn" onClick={() => navigate("/backtests/run")}>+ New Run</button>
+          </div>
+        </div>
+        {idbLoading && <div style={{ padding: "2.5rem" }}><LoadingState rows={4} height="h-14" /></div>}
+        {!idbLoading && idbItems.length === 0 && (
+          <div style={{ padding: "3.75rem 2.5rem", color: "var(--ink-3)", fontFamily: "var(--mono)", fontSize: '0.875rem' }}>
+            No saved backtests. Run a backtest to see results here.
+          </div>
+        )}
+        {!idbLoading && idbItems.length > 0 && (
+          <div className="bt-list">
+            {idbItems.map(item => {
+              const up = item.roiPct >= 0;
+              return (
+                <div key={item.workflowId} className="bt-row"
+                     onClick={() => navigate(`/backtests/public/${item.workflowId}`)}>
+                  <div className="name">
+                    <span className="t">Run {item.workflowId.slice(-12)}</span>
+                    <span className="s">{formatDate(item.startDate)} → {formatDate(item.endDate)}</span>
+                    <div style={{ display: "flex", gap: '0.25rem', flexWrap: "wrap", marginTop: '0.375rem' }}>
+                      {[
+                        item.signalParams?.compositeIndex
+                          ? item.signalParams.compositeIndex.replace('^', '')
+                          : 'no index',
+                        item.signalParams?.entryTiming === 'prev_close_next_open' ? 'prev↗'
+                          : item.signalParams?.entryTiming === 'next_day_open' ? 'next↗'
+                          : item.signalParams?.entryTiming ?? 'next↗',
+                        item.strategyConfig ? `hold ${item.strategyConfig.holdDays}d` : null,
+                        item.strategyConfig?.useTrailingStop ? `trail ${item.strategyConfig.trailingStopPct}%` : null,
+                        item.signalParams ? `conf ${item.signalParams.minConfidence}%` : null,
+                      ].filter(Boolean).map(tag => (
+                        <span key={tag} style={{
+                          fontFamily: "var(--mono)", fontSize: '0.5625rem', fontWeight: 600,
+                          letterSpacing: "0.08em", textTransform: "uppercase",
+                          padding: "0.125rem 0.375rem", borderRadius: '0.25rem',
+                          background: "var(--bg-3)", border: "1px solid var(--line-strong)",
+                          color: "var(--ink-3)",
+                        }}>{tag}</span>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="spark">
+                    <Sparkline profitPct={item.roiPct} />
+                  </div>
+                  <div className={`roi-val ${up ? "up" : "down"}`}>
+                    {up ? "+" : ""}{item.roiPct.toFixed(2)}
+                    <span style={{ fontSize: "0.55em", color: "var(--ink-2)", fontStyle: "italic" }}>%</span>
+                  </div>
+                  <div className="metric"><span className="k">Win</span>{item.winRatePct.toFixed(1)}%</div>
+                  <div className="metric"><span className="k">Sharpe</span>{formatNumber(item.sharpeRatio)}</div>
+                  <div className="metric"><span className="k">Max DD</span>−{item.maxDrawdownPct.toFixed(1)}%</div>
+                  <div className="metric"><span className="k">Trades</span>{item.totalTrades}</div>
+                  <div
+                    className="row-del"
+                    onClick={(e) => handleDeletePublic(e, item.workflowId)}
+                    title="Delete from browser storage"
+                  >
+                    ×
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        <ConfirmDialog
+          open={confirmDelete !== null}
+          title="Delete this backtest?"
+          message="This run will be removed from your browser storage and can't be recovered."
+          confirmLabel="Delete"
+          danger
+          onConfirm={confirmDeletePublic}
+          onCancel={() => setConfirmDelete(null)}
+        />
+        <ConfirmDialog
+          open={confirmClearAll}
+          title={`Clear all ${idbItems.length} backtests?`}
+          message="All saved runs will be permanently removed from your browser. This cannot be undone."
+          confirmLabel="Clear All"
+          danger
+          onConfirm={confirmClearAllPublic}
+          onCancel={() => setConfirmClearAll(false)}
+        />
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -262,13 +390,13 @@ export default function BacktestListPage() {
                 <>
                   {bestROI >= 0 ? "+" : ""}
                   {bestROI.toFixed(1)}
-                  <span style={{ fontSize: 18, color: "var(--ink-2)" }}>%</span>
+                  <span style={{ fontSize: '1.125rem', color: "var(--ink-2)" }}>%</span>
                 </>
               ) : (
                 <>
                   {avgROI >= 0 ? "+" : ""}
                   {avgROI.toFixed(1)}
-                  <span style={{ fontSize: 18, color: "var(--ink-2)" }}>%</span>
+                  <span style={{ fontSize: '1.125rem', color: "var(--ink-2)" }}>%</span>
                 </>
               )}
             </div>
@@ -286,13 +414,13 @@ export default function BacktestListPage() {
               {tab === "grid_search" ? (
                 <>
                   {avgWR.toFixed(1)}
-                  <span style={{ fontSize: 18, color: "var(--ink-2)" }}>%</span>
+                  <span style={{ fontSize: '1.125rem', color: "var(--ink-2)" }}>%</span>
                 </>
               ) : (
                 <>
                   {bestROI >= 0 ? "+" : ""}
                   {bestROI.toFixed(1)}
-                  <span style={{ fontSize: 18, color: "var(--ink-2)" }}>%</span>
+                  <span style={{ fontSize: '1.125rem', color: "var(--ink-2)" }}>%</span>
                 </>
               )}
             </div>
@@ -311,7 +439,7 @@ export default function BacktestListPage() {
       {/* Tabs */}
       <div
         className="tab-row"
-        style={{ padding: "0 40px", borderBottom: "1px solid var(--line)" }}
+        style={{ padding: "0 2.5rem", borderBottom: "1px solid var(--line)" }}
       >
         <button
           className={`tb${tab === "manual" ? " active" : ""}`}
@@ -319,12 +447,14 @@ export default function BacktestListPage() {
         >
           Manual Runs
         </button>
-        <button
-          className={`tb${tab === "grid_search" ? " active" : ""}`}
-          onClick={() => handleTabChange("grid_search")}
-        >
-          Grid Search
-        </button>
+        {getLiveKey() && (
+          <button
+            className={`tb${tab === "grid_search" ? " active" : ""}`}
+            onClick={() => handleTabChange("grid_search")}
+          >
+            Grid Search
+          </button>
+        )}
       </div>
 
       {/* Timeframe filter — only for manual tab */}
@@ -346,12 +476,12 @@ export default function BacktestListPage() {
 
       {/* Content */}
       {isLoading && (
-        <div style={{ padding: "40px" }}>
+        <div style={{ padding: "2.5rem" }}>
           <LoadingState rows={8} height="h-14" />
         </div>
       )}
       {isError && (
-        <div style={{ padding: "40px" }}>
+        <div style={{ padding: "2.5rem" }}>
           <ErrorState message="Failed to load backtests" onRetry={refetch} />
         </div>
       )}
@@ -359,10 +489,10 @@ export default function BacktestListPage() {
       {data && filtered.length === 0 && (
         <div
           style={{
-            padding: "60px 40px",
+            padding: "3.75rem 2.5rem",
             color: "var(--ink-3)",
             fontFamily: "var(--mono)",
-            fontSize: 14,
+            fontSize: '0.875rem',
           }}
         >
           No backtests found.
@@ -392,11 +522,11 @@ export default function BacktestListPage() {
       {/* Grid search tab */}
       {data && tab === "grid_search" && filtered.length > 0 && (
         <div className="gs-list">
-          <div className={`gs-header${showParams ? " with-params" : ""}`}>
+          <div className="gs-header with-params">
             <span>Rank</span>
             <span>Period</span>
             <span>ROI</span>
-            {showParams && <span>Parameters</span>}
+            <span>Parameters</span>
             <span>WR / PF / Trades</span>
             <span />
           </div>
@@ -405,7 +535,6 @@ export default function BacktestListPage() {
               key={b.id}
               b={b}
               rank={i + 1}
-              showParams={showParams}
               onNavigate={(id) => navigate(`/backtests/${id}`)}
             />
           ))}
@@ -415,7 +544,7 @@ export default function BacktestListPage() {
       {/* Pagination */}
       {data && data.totalPages > 1 && (
         <div
-          style={{ padding: "16px 40px", borderTop: "1px solid var(--line)" }}
+          style={{ padding: "1rem 2.5rem", borderTop: "1px solid var(--line)" }}
         >
           <Pagination
             page={page}

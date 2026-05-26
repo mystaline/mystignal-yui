@@ -11,14 +11,14 @@ export function BacktestListRow({ backtest, onDelete }: Props) {
   const isProfit = backtest.profitPercentage >= 0
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: '16px', borderBottom: '1px solid var(--line)' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', borderBottom: '1px solid var(--line)' }}>
       {/* ID */}
       <Link
         to={ROUTES.backtests.detail(backtest.id)}
         style={{
-          minWidth: 60,
+          minWidth: '3.75rem',
           fontFamily: 'var(--mono)',
-          fontSize: 13,
+          fontSize: '0.8125rem',
           fontWeight: 600,
           color: 'var(--accent)',
           textDecoration: 'none',
@@ -29,22 +29,22 @@ export function BacktestListRow({ backtest, onDelete }: Props) {
       </Link>
 
       {/* Strategy */}
-      <div style={{ minWidth: 100, fontSize: 12, color: 'var(--ink)' }}>
+      <div style={{ minWidth: '6.25rem', fontSize: '0.75rem', color: 'var(--ink)' }}>
         {backtest.strategyName}
       </div>
 
       {/* Profit % */}
-      <div style={{ minWidth: 70, fontSize: 12, color: isProfit ? 'var(--up)' : 'var(--down)', fontWeight: 600 }}>
+      <div style={{ minWidth: '4.375rem', fontSize: '0.75rem', color: isProfit ? 'var(--up)' : 'var(--down)', fontWeight: 600 }}>
         {isProfit ? '+' : ''}{backtest.profitPercentage.toFixed(2)}%
       </div>
 
       {/* Total Trades */}
-      <div style={{ minWidth: 60, fontSize: 11, color: 'var(--ink-3)' }}>
+      <div style={{ minWidth: '3.75rem', fontSize: '0.6875rem', color: 'var(--ink-3)' }}>
         {backtest.totalTrades} trades
       </div>
 
       {/* Win Rate */}
-      <div style={{ minWidth: 50, fontSize: 11, color: 'var(--ink-3)' }}>
+      <div style={{ minWidth: '3.125rem', fontSize: '0.6875rem', color: 'var(--ink-3)' }}>
         {(backtest.winRate * 100).toFixed(0)}%
       </div>
 
@@ -58,7 +58,7 @@ export function BacktestListRow({ backtest, onDelete }: Props) {
             border: 'none',
             color: 'var(--down)',
             cursor: 'pointer',
-            fontSize: 12,
+            fontSize: '0.75rem',
             opacity: 0.7,
           }}
         >

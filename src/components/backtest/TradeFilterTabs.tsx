@@ -11,8 +11,8 @@ interface Props {
 }
 
 const TAB_STYLE: React.CSSProperties = {
-  padding: '8px 12px',
-  fontSize: 12,
+  padding: '0.5rem 0.75rem',
+  fontSize: '0.75rem',
   fontFamily: 'var(--mono)',
   fontWeight: 600,
   border: 'none',
@@ -36,7 +36,7 @@ export function TradeFilterTabs({ active, onChange, counts = {} }: Props) {
   ]
 
   return (
-    <div style={{ display: 'flex', gap: 4, borderBottom: '1px solid var(--line)', marginBottom: 16 }}>
+    <div style={{ display: 'flex', gap: '0.25rem', borderBottom: '1px solid var(--line)', marginBottom: '1rem' }}>
       {tabs.map(tab => (
         <button
           key={tab.value}
