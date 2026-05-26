@@ -13,7 +13,7 @@ export function SignalFilters({ params, onChange }: SignalFiltersProps) {
   return (
     <>
       <div className="search" style={{ maxWidth: 280 }}>
-        <Search style={{ width: 13, height: 13, flexShrink: 0, color: 'var(--ink-3)' }} />
+        <Search style={{ width: '0.8125rem', height: '0.8125rem', flexShrink: 0, color: 'var(--ink-3)' }} />
         <input
           type="text"
           placeholder="Symbol…"
@@ -41,7 +41,7 @@ export function SignalFilters({ params, onChange }: SignalFiltersProps) {
         value={params.status ?? ''}
         onChange={e => onChange({ ...params, status: (e.target.value as SignalStatus) || undefined, page: 1 })}
         className="input-field"
-        style={{ fontSize: 11 }}
+        style={{ fontSize: '0.6875rem' }}
       >
         <option value="">All statuses</option>
         {STATUSES.map(s => <option key={s} value={s}>{s}</option>)}

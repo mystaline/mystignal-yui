@@ -12,18 +12,18 @@ export function ErrorState({ message = 'Something went wrong', onRetry }: ErrorS
     <motion.div
       animate="shake"
       variants={shakeVariant}
-      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 14, padding: '48px 0', textAlign: 'center' }}
+      style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.875rem', padding: '3rem 0', textAlign: 'center' }}
     >
       <div style={{
-        padding: 12, borderRadius: '50%',
+        padding: '0.75rem', borderRadius: '50%',
         background: 'color-mix(in srgb, var(--down) 10%, transparent)',
         border: '1px solid color-mix(in srgb, var(--down) 20%, transparent)',
       }}>
-        <AlertTriangle style={{ width: 22, height: 22, color: 'var(--down)' }} />
+        <AlertTriangle style={{ width: '1.375rem', height: '1.375rem', color: 'var(--down)' }} />
       </div>
-      <p className="mono" style={{ fontSize: 13, color: 'var(--ink-2)' }}>{message}</p>
+      <p className="mono" style={{ fontSize: '0.8125rem', color: 'var(--ink-2)' }}>{message}</p>
       {onRetry && (
-        <button onClick={onRetry} className="btn" style={{ fontSize: 12 }}>
+        <button onClick={onRetry} className="btn" style={{ fontSize: '0.75rem' }}>
           Try again
         </button>
       )}

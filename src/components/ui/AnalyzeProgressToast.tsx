@@ -28,7 +28,7 @@ function ProgressBar({ phase }: { phase: AnalyzePhase }) {
   const indeterminate = ACTIVE_PHASES.includes(phase)
 
   return (
-    <div style={{ height: 2, background: 'var(--line)', borderRadius: 1, overflow: 'hidden', marginTop: 10 }}>
+    <div style={{ height: '0.125rem', background: 'var(--line)', borderRadius: '0.0625rem', overflow: 'hidden', marginTop: '0.625rem' }}>
       <motion.div
         style={{ height: '100%', background: phase === 'error' ? 'var(--down)' : 'var(--accent)', borderRadius: 1 }}
         animate={indeterminate
@@ -57,23 +57,23 @@ export function AnalyzeProgressToast() {
           exit={{ opacity: 0, y: 16, scale: 0.97 }}
           transition={{ duration: 0.2 }}
           style={{
-            position: 'fixed', bottom: 24, right: 24, zIndex: 9999,
-            width: 300,
+            position: 'fixed', bottom: '1.5rem', right: '1.5rem', zIndex: 9999,
+            width: '18.75rem',
             background: 'var(--bg-2)',
             border: '1px solid var(--line)',
-            borderRadius: 12,
-            padding: '14px 16px',
+            borderRadius: '0.75rem',
+            padding: '0.875rem 1rem',
             boxShadow: '0 8px 32px rgba(0,0,0,.35)',
           }}
         >
           {/* Header */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
             <div>
-              <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 3 }}>
+              <div style={{ fontFamily: 'var(--mono)', fontSize: '0.6875rem', color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '0.1875rem' }}>
                 Signal Analysis
               </div>
               <div style={{
-                fontFamily: 'var(--mono)', fontSize: 13, fontWeight: 600,
+                fontFamily: 'var(--mono)', fontSize: '0.8125rem', fontWeight: 600,
                 color: PHASE_COLOR[state.phase] ?? 'var(--ink)',
               }}>
                 {PHASE_LABEL[state.phase]}
@@ -82,14 +82,14 @@ export function AnalyzeProgressToast() {
             {(state.phase === 'done' || state.phase === 'error' || state.phase === 'bearish') && (
               <button
                 onClick={dismiss}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)', fontSize: 14, padding: '0 0 0 8px' }}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ink-3)', fontSize: '0.875rem', padding: '0 0 0 0.5rem' }}
               >✕</button>
             )}
           </div>
 
           {/* Message */}
           {state.message && (
-            <div style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-2)', marginTop: 6, lineHeight: 1.5 }}>
+            <div style={{ fontFamily: 'var(--mono)', fontSize: '0.6875rem', color: 'var(--ink-2)', marginTop: '0.375rem', lineHeight: 1.5 }}>
               {state.message}
             </div>
           )}
@@ -97,12 +97,12 @@ export function AnalyzeProgressToast() {
           {/* Stats row for done */}
           {state.phase === 'done' && (
             <div style={{
-              marginTop: 10,
-              padding: '8px 10px',
+              marginTop: '0.625rem',
+              padding: '0.5rem 0.625rem',
               background: 'rgba(74,222,128,.08)',
               border: '1px solid rgba(74,222,128,.2)',
-              borderRadius: 8,
-              fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--up)',
+              borderRadius: '0.5rem',
+              fontFamily: 'var(--mono)', fontSize: '0.75rem', color: 'var(--up)',
             }}>
               ✅ {state.signalsFound} signal{state.signalsFound !== 1 ? 's' : ''} saved — table refreshed
             </div>
@@ -111,12 +111,12 @@ export function AnalyzeProgressToast() {
           {/* Stats row for bearish */}
           {state.phase === 'bearish' && (
             <div style={{
-              marginTop: 10,
-              padding: '8px 10px',
+              marginTop: '0.625rem',
+              padding: '0.5rem 0.625rem',
               background: 'rgba(239,68,68,.08)',
               border: '1px solid rgba(239,68,68,.2)',
-              borderRadius: 8,
-              fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--down)',
+              borderRadius: '0.5rem',
+              fontFamily: 'var(--mono)', fontSize: '0.75rem', color: 'var(--down)',
             }}>
               🔴 IHSG close {state.lastClose?.toFixed(0)} &lt; EMA50 {state.ema50?.toFixed(0)}
             </div>
