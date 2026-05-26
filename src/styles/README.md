@@ -1,4 +1,4 @@
-# Styling System — mystignal-ui
+# Styling System — mystignal-yui
 
 ## Single System Rule
 
