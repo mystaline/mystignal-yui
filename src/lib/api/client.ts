@@ -1,5 +1,3 @@
-import { mockHandlers } from "@/lib/mock/handlers";
-
 const BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "";
 const KEY_STORAGE = "msig_ak";
 
