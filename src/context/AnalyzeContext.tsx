@@ -1,8 +1,9 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from 'react'
 import { useQueryClient } from '@tanstack/react-query'
 import { queryKeys } from '@/lib/query-keys'
-import { BASE_URL, getAuthHeaders } from '@/lib/api/client'
-import type { TriggerAnalyzeRequest } from '@/types/signal'
+import { BASE_URL, getAuthHeaders, getLiveKey } from '@/lib/api/client'
+import { saveSignals } from '@/lib/idb'
+import type { TriggerAnalyzeRequest, SignalResponse } from '@/types/signal'
 
 export type AnalyzePhase =
   | 'idle'
@@ -81,10 +82,17 @@ export function AnalyzeProvider({ children }: { children: ReactNode }) {
               ema50: ev.ema50 ?? s.ema50,
             }))
             if (ev.type === 'done') {
-              // Small delay — let server-side transaction fully commit before refetch
-              setTimeout(() => {
+              const invalidate = () => setTimeout(() => {
                 queryClient.invalidateQueries({ queryKey: queryKeys.signals.all })
               }, 500)
+              if (!getLiveKey() && Array.isArray(ev.signals) && ev.signals.length > 0) {
+                // Only persist if signals were found — empty result keeps existing IDB signals intact
+                saveSignals(ev.signals as SignalResponse[])
+                  .catch(err => console.warn('[AnalyzeContext] Failed to persist signals to IDB:', err))
+                  .finally(invalidate)
+              } else {
+                invalidate()
+              }
               // Auto-dismiss toast after 6s
               setTimeout(() => setState(IDLE), 6000)
             }

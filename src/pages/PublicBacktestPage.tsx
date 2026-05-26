@@ -5,26 +5,47 @@ import { EquityCurve } from '@/components/charts/EquityCurve'
 import { LoadingState } from '@/components/ui/LoadingState'
 import { useStaggerReady } from '@/hooks/useStaggerReady'
 import { usePublicBacktest } from '@/context/PublicBacktestContext'
-import { getPublicBacktest } from '@/lib/idb'
+import { getPublicBacktestEntry } from '@/lib/idb'
 import { formatIDR, formatNumber, formatDate } from '@/lib/utils'
-import type { PublicBacktestResult } from '@/types/backtest'
+import type { PublicBacktestResult, GenericStrategyConfigDTO } from '@/types/backtest'
+import type { PublicSignalParams } from '@/lib/idb'
+
+function ParamGrid({ rows }: { rows: { label: string; value: string }[] }) {
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', marginTop: '1rem' }}>
+      {rows.map(({ label, value }) => (
+        <div key={label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: '0.75rem' }}>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: '0.625rem', fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--ink-3)', whiteSpace: 'nowrap' }}>
+            {label}
+          </span>
+          <span style={{ fontFamily: 'var(--mono)', fontSize: '0.75rem', color: 'var(--ink-2)', textAlign: 'right' }}>
+            {value}
+          </span>
+        </div>
+      ))}
+    </div>
+  )
+}
 
 export default function PublicBacktestPage() {
   const { workflowId = '' } = useParams<{ workflowId: string }>()
   const { state } = usePublicBacktest()
   const [detail, setDetail] = useState<PublicBacktestResult | null>(null)
+  const [strategyConfig, setStrategyConfig] = useState<GenericStrategyConfigDTO | null>(null)
+  const [signalParams, setSignalParams] = useState<PublicSignalParams | null>(null)
   const [loading, setLoading] = useState(true)
 
   const isActiveJob = state.workflowId === workflowId
   const inProgress = isActiveJob && !['idle', 'done', 'error', 'expired'].includes(state.phase)
 
-  // Read from IndexedDB on mount (covers returning to a past result).
-  // Only sets detail if context hasn't already provided it (avoids race where
-  // IDB resolves after context onDone and overwrites with undefined).
   useEffect(() => {
     if (!workflowId) { setLoading(false); return }
-    getPublicBacktest(workflowId).then(r => {
-      setDetail(prev => prev ?? (r ?? null))
+    getPublicBacktestEntry(workflowId).then(entry => {
+      if (entry) {
+        setDetail(prev => prev ?? entry.result)
+        setStrategyConfig(entry.strategyConfig ?? null)
+        setSignalParams(entry.signalParams ?? null)
+      }
       setLoading(false)
     })
   }, [workflowId])
@@ -34,14 +55,16 @@ export default function PublicBacktestPage() {
   useEffect(() => {
     if (isActiveJob && state.phase === 'done' && state.result) {
       setDetail(state.result)
+      setStrategyConfig(state.strategyConfig)
+      setSignalParams(state.signalParams)
       setLoading(false)
     }
-  }, [workflowId, isActiveJob, state.phase, state.result])
+  }, [workflowId, isActiveJob, state.phase, state.result, state.strategyConfig, state.signalParams])
 
   const chartReady = useStaggerReady(!loading && !!detail)
 
   if (loading || inProgress) return (
-    <div style={{ padding: 40 }}>
+    <div style={{ padding: '2.5rem' }}>
       <div className="pg-head">
         <div>
           <div className="eyebrow">Public Backtest · {workflowId.slice(-8)}</div>
@@ -49,7 +72,7 @@ export default function PublicBacktestPage() {
         </div>
       </div>
       {inProgress && (
-        <div style={{ fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--ink-2)', marginBottom: 20 }}>
+        <div style={{ fontFamily: 'var(--mono)', fontSize: '0.8125rem', color: 'var(--ink-2)', marginBottom: '1.25rem' }}>
           {state.label || 'Processing…'} — results will appear here automatically.
         </div>
       )}
@@ -58,11 +81,11 @@ export default function PublicBacktestPage() {
   )
 
   if (!detail) return (
-    <div style={{ padding: 40, maxWidth: 520 }}>
+    <div style={{ padding: '2.5rem', maxWidth: '32.5rem' }}>
       <div className="pg-head">
         <div><h1>Result Not Found<em>.</em></h1></div>
       </div>
-      <div style={{ fontFamily: 'var(--mono)', fontSize: 13, color: 'var(--ink-2)', marginBottom: 20 }}>
+      <div style={{ fontFamily: 'var(--mono)', fontSize: '0.8125rem', color: 'var(--ink-2)', marginBottom: '1.25rem' }}>
         Backtest results are stored only in your browser. This result is not available — it may still be
         processing, or your browser data was cleared.
       </div>
@@ -98,6 +121,16 @@ export default function PublicBacktestPage() {
             <span className="chip">{m.timeframe.toUpperCase()}</span>
             <span className="chip">Public</span>
             <span className="chip">ISSI Universe</span>
+            {signalParams?.compositeIndex
+              ? <span className="chip">{signalParams.compositeIndex.replace('^', '')} filter</span>
+              : <span className="chip" style={{ opacity: 0.5 }}>no index filter</span>}
+            {signalParams?.entryTiming && (
+              <span className="chip">
+                {signalParams.entryTiming === 'prev_close_next_open' ? 'prev close → next open'
+                  : signalParams.entryTiming === 'next_day_open' ? 'next day open'
+                  : signalParams.entryTiming}
+              </span>
+            )}
           </div>
         </div>
         <div className="roi-stat">
@@ -137,12 +170,12 @@ export default function PublicBacktestPage() {
         </div>
         <div className="k">
           <div className="l">Avg Win</div>
-          <div className="v" style={{ color: 'var(--up)', fontSize: 22 }}>{formatIDR(a.avgWin)}</div>
+          <div className="v" style={{ color: 'var(--up)', fontSize: '1.375rem' }}>{formatIDR(a.avgWin)}</div>
           <div className="s">Best {formatIDR(a.largestWin)}</div>
         </div>
         <div className="k">
           <div className="l">Avg Loss</div>
-          <div className="v" style={{ color: 'var(--down)', fontSize: 22 }}>{formatIDR(Math.abs(a.avgLoss))}</div>
+          <div className="v" style={{ color: 'var(--down)', fontSize: '1.375rem' }}>{formatIDR(Math.abs(a.avgLoss))}</div>
           <div className="s">Worst {formatIDR(Math.abs(a.largestLoss))}</div>
         </div>
       </div>
@@ -159,11 +192,41 @@ export default function PublicBacktestPage() {
         </div>
       </div>
 
-      <div style={{ padding: '0 40px 24px', textAlign: 'center' }}>
-        <p style={{ fontFamily: 'var(--mono)', fontSize: 11, color: 'var(--ink-3)' }}>
+      {(strategyConfig || signalParams) && (
+        <div className="neon-content" style={{ gridTemplateColumns: '1fr 1fr', padding: '0 2.5rem 1.5rem' }}>
+          {signalParams && (
+            <div className="neon-card">
+              <h4>Signal Parameters</h4>
+              <ParamGrid rows={[
+                { label: 'Market Filter', value: signalParams.compositeIndex ? signalParams.compositeIndex.replace('^', '') + ' (IHSG composite)' : '— none' },
+                { label: 'Min Confidence', value: `${signalParams.minConfidence}%` },
+                { label: 'Entry Timing', value: signalParams.entryTiming === 'prev_close_next_open' ? 'Prev close → next open' : signalParams.entryTiming === 'next_day_open' ? 'Next day open' : signalParams.entryTiming },
+              ]} />
+            </div>
+          )}
+          {strategyConfig && (
+            <div className="neon-card">
+              <h4>Strategy Config</h4>
+              <ParamGrid rows={[
+                { label: 'Hold Days', value: `${strategyConfig.holdDays} days` },
+                { label: 'SL Multiplier', value: `${strategyConfig.slMultiplier}×` },
+                { label: 'TP Multiplier', value: `${strategyConfig.tpMultiplier}×` },
+                { label: 'Trailing Stop', value: strategyConfig.useTrailingStop ? `${strategyConfig.trailingStopPct}%` : 'off' },
+                { label: 'RSI', value: strategyConfig.rsi.enabled ? `period ${strategyConfig.rsi.period}, OS < ${strategyConfig.rsi.oversoldThreshold}` : 'off' },
+                { label: 'EMA', value: strategyConfig.ema.enabled ? `${strategyConfig.ema.fastPeriod} / ${strategyConfig.ema.slowPeriod}` : 'off' },
+                { label: 'Volume', value: strategyConfig.volume.enabled ? `spike ×${strategyConfig.volume.spikeThreshold}` : 'off' },
+                { label: 'ATR Filter', value: strategyConfig.atrFilter.enabled ? `period ${strategyConfig.atrFilter.period}, min ${strategyConfig.atrFilter.minAtrPct}%` : 'off' },
+              ]} />
+            </div>
+          )}
+        </div>
+      )}
+
+      <div style={{ padding: '0 2.5rem 1.5rem', textAlign: 'center' }}>
+        <p style={{ fontFamily: 'var(--mono)', fontSize: '0.6875rem', color: 'var(--ink-3)' }}>
           Simulation only — not financial advice. Past backtest performance does not guarantee future results.
         </p>
-        <Link to="/backtests/run" style={{ fontFamily: 'var(--mono)', fontSize: 12, color: 'var(--accent)' }}>
+        <Link to="/backtests/run" style={{ fontFamily: 'var(--mono)', fontSize: '0.75rem', color: 'var(--accent)' }}>
           Run your own backtest →
         </Link>
       </div>
