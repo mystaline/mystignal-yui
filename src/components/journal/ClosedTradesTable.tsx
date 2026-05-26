@@ -8,11 +8,11 @@ interface Props {
   isLoading: boolean
 }
 
-const COL = '80px 55px 110px 110px 110px 90px 160px 70px'
+const COL = '5rem 3.4375rem 6.875rem 6.875rem 6.875rem 5.625rem 10rem 4.375rem'
 
 function ColHeader() {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: COL, color: 'var(--ink-3)', fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', paddingBottom: 6, borderBottom: '1px solid var(--line)' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: COL, color: 'var(--ink-3)', fontSize: '0.6875rem', letterSpacing: '0.06em', textTransform: 'uppercase', paddingBottom: '0.375rem', borderBottom: '1px solid var(--line)' }}>
       <span>Symbol</span>
       <span>Lot</span>
       <span className="text-right">Entry</span>
@@ -30,7 +30,7 @@ export function ClosedTradesTable({ trades, isLoading }: Props) {
 
   if (trades.length === 0) {
     return (
-      <div style={{ padding: '48px 0', textAlign: 'center', color: 'var(--ink-3)' }} className="mono">
+      <div style={{ padding: '3rem 0', textAlign: 'center', color: 'var(--ink-3)' }} className="mono">
         No closed trades
       </div>
     )
@@ -38,14 +38,14 @@ export function ClosedTradesTable({ trades, isLoading }: Props) {
 
   return (
     <div className="neon-card" style={{ overflow: 'hidden' }}>
-      <div style={{ padding: '0 20px' }}>
+      <div style={{ padding: '0 1.25rem' }}>
         <ColHeader />
         {trades.map(t => {
           const pnlColor = (t.profitLoss ?? 0) >= 0 ? 'var(--up)' : 'var(--down)'
           return (
             <div
               key={t.id}
-              style={{ display: 'grid', gridTemplateColumns: COL, alignItems: 'center', padding: '12px 0', borderBottom: '1px solid var(--line)' }}
+              style={{ display: 'grid', gridTemplateColumns: COL, alignItems: 'center', padding: '0.75rem 0', borderBottom: '1px solid var(--line)' }}
             >
               <span className="mono font-bold" style={{ color: 'var(--accent)' }}>{t.symbol}</span>
               <span className="mono" style={{ color: 'var(--ink-2)' }}>{t.lot}L</span>
@@ -58,7 +58,7 @@ export function ClosedTradesTable({ trades, isLoading }: Props) {
               <div className="text-right">
                 <span className="mono" style={{ color: pnlColor }}>{t.profitLoss != null ? formatIDR(t.profitLoss) : '—'}</span>
                 {t.profitLossPct != null && (
-                  <span className="mono" style={{ color: pnlColor, fontSize: 11, marginLeft: 4 }}>
+                  <span className="mono" style={{ color: pnlColor, fontSize: '0.6875rem', marginLeft: '0.25rem' }}>
                     ({formatPct(t.profitLossPct, true)})
                   </span>
                 )}

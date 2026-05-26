@@ -9,11 +9,11 @@ interface Props {
   onCancel: (id: string) => void
 }
 
-const COL = '80px 60px 110px 110px 140px 140px 100px 100px 120px'
+const COL = '5rem 3.75rem 6.875rem 6.875rem 8.75rem 8.75rem 6.25rem 6.25rem 7.5rem'
 
 function ColHeader() {
   return (
-    <div className="bt-row" style={{ display: 'grid', gridTemplateColumns: COL, color: 'var(--ink-3)', fontSize: 11, letterSpacing: '0.06em', textTransform: 'uppercase', paddingBottom: 6, borderBottom: '1px solid var(--line)' }}>
+    <div className="bt-row" style={{ display: 'grid', gridTemplateColumns: COL, color: 'var(--ink-3)', fontSize: '0.6875rem', letterSpacing: '0.06em', textTransform: 'uppercase', paddingBottom: '0.375rem', borderBottom: '1px solid var(--line)' }}>
       <span>Symbol</span>
       <span>Lot</span>
       <span className="text-right">Entry</span>
@@ -32,7 +32,7 @@ export function OpenPositionsTable({ trades, isLoading, onClose, onCancel }: Pro
 
   if (trades.length === 0) {
     return (
-      <div style={{ padding: '48px 0', textAlign: 'center', color: 'var(--ink-3)' }} className="mono">
+      <div style={{ padding: '3rem 0', textAlign: 'center', color: 'var(--ink-3)' }} className="mono">
         No open positions
       </div>
     )
@@ -40,7 +40,7 @@ export function OpenPositionsTable({ trades, isLoading, onClose, onCancel }: Pro
 
   return (
     <div className="neon-card" style={{ overflow: 'hidden' }}>
-      <div style={{ padding: '0 20px' }}>
+      <div style={{ padding: '0 1.25rem' }}>
         <ColHeader />
         {trades.map(t => {
           const pnlColor = (t.unrealizedPnl ?? 0) >= 0 ? 'var(--up)' : 'var(--down)'
@@ -48,7 +48,7 @@ export function OpenPositionsTable({ trades, isLoading, onClose, onCancel }: Pro
             <div
               key={t.id}
               className="bt-row"
-              style={{ display: 'grid', gridTemplateColumns: COL, alignItems: 'center', padding: '12px 0', borderBottom: '1px solid var(--line)' }}
+              style={{ display: 'grid', gridTemplateColumns: COL, alignItems: 'center', padding: '0.75rem 0', borderBottom: '1px solid var(--line)' }}
             >
               <span className="mono font-bold" style={{ color: 'var(--accent)' }}>{t.symbol}</span>
               <span className="mono" style={{ color: 'var(--ink-2)' }}>{t.lot}L</span>
@@ -68,16 +68,16 @@ export function OpenPositionsTable({ trades, isLoading, onClose, onCancel }: Pro
               <span className="mono text-right" style={{ color: 'var(--ink-2)', whiteSpace: 'nowrap' }}>
                 {t.stopLoss != null ? formatIDR(t.stopLoss) : '—'}
               </span>
-              <div style={{ display: 'flex', gap: 6, justifyContent: 'flex-end' }}>
+              <div style={{ display: 'flex', gap: '0.375rem', justifyContent: 'flex-end' }}>
                 <button
                   className="btn"
-                  style={{ padding: '4px 12px', fontSize: 12 }}
+                  style={{ padding: '0.25rem 0.75rem', fontSize: '0.75rem' }}
                   onClick={() => onClose(t)}
                 >
                   Close
                 </button>
                 <button
-                  style={{ padding: '4px 10px', fontSize: 12, background: 'transparent', border: '1px solid var(--line)', borderRadius: 6, color: 'var(--ink-3)', cursor: 'pointer' }}
+                  style={{ padding: '0.25rem 0.625rem', fontSize: '0.75rem', background: 'transparent', border: '1px solid var(--line)', borderRadius: '0.375rem', color: 'var(--ink-3)', cursor: 'pointer' }}
                   onClick={() => onCancel(t.id)}
                 >
                   ✕

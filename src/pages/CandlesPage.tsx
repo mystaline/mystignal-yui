@@ -51,7 +51,7 @@ export default function CandlesPage() {
               onChange={e => setSearch(e.target.value)}
             />
           </div>
-          {stocksLoading && <div style={{ padding: 16 }}><LoadingState rows={8} /></div>}
+          {stocksLoading && <div style={{ padding: '1rem' }}><LoadingState rows={8} /></div>}
           {filteredStocks.map(s => (
             <div
               key={s.symbol}
@@ -68,12 +68,12 @@ export default function CandlesPage() {
         <div className="candle-chart-panel">
           {/* Toolbar */}
           <div className="candle-chart-toolbar">
-            <div style={{ display: 'flex', alignItems: 'flex-end', gap: 12 }}>
-              <span style={{ fontFamily: 'var(--display)', fontSize: 40, lineHeight: 1, letterSpacing: '-0.02em' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-end', gap: '0.75rem' }}>
+              <span style={{ fontFamily: 'var(--display)', fontSize: '2.5rem', lineHeight: 1, letterSpacing: '-0.02em' }}>
                 {symbol || '—'}<em style={{ color: 'var(--accent)' }}>.</em>
               </span>
               {data && (
-                <span className="eyebrow" style={{ paddingBottom: 6 }}>{data.count} candles</span>
+                <span className="eyebrow" style={{ paddingBottom: '0.375rem' }}>{data.count} candles</span>
               )}
             </div>
             <div className="seg">
@@ -86,7 +86,7 @@ export default function CandlesPage() {
           </div>
 
           {/* Chart */}
-          <div style={{ flex: 1, padding: '20px 24px', minHeight: 0 }}>
+          <div style={{ flex: 1, padding: '1.25rem 1.5rem', minHeight: 0 }}>
             {isLoading && <LoadingState rows={1} height="h-96" />}
             {isError && <ErrorState message={`Failed to load ${symbol}`} onRetry={refetch} />}
             {data && (

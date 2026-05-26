@@ -31,19 +31,19 @@ const inputStyle: React.CSSProperties = {
   width: '100%',
   background: 'var(--bg)',
   border: '1px solid var(--line)',
-  borderRadius: 8,
-  padding: '8px 12px',
+  borderRadius: '0.5rem',
+  padding: '0.5rem 0.75rem',
   color: 'var(--ink)',
-  fontSize: 14,
+  fontSize: '0.875rem',
   outline: 'none',
   boxSizing: 'border-box',
 }
 
 const labelStyle: React.CSSProperties = {
   display: 'block',
-  fontSize: 11,
+  fontSize: '0.6875rem',
   color: 'var(--ink-2)',
-  marginBottom: 4,
+  marginBottom: '0.25rem',
   letterSpacing: '0.06em',
   textTransform: 'uppercase',
 }
@@ -136,14 +136,14 @@ export function LogTradePanel({ open, onClose }: Props) {
             exit={{ x: '100%' }}
             transition={{ type: 'tween', duration: 0.22 }}
             style={{
-              position: 'fixed', top: 0, right: 0, bottom: 0, width: 440,
+              position: 'fixed', top: 0, right: 0, bottom: 0, width: '27.5rem',
               background: 'var(--bg-2)', borderLeft: '1px solid var(--line)',
               zIndex: 100, overflowY: 'auto', display: 'flex', flexDirection: 'column',
             }}
           >
             {/* Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '24px 24px 16px', borderBottom: '1px solid var(--line)', flexShrink: 0 }}>
-              <span className="display" style={{ fontSize: 20 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.5rem 1.5rem 1rem', borderBottom: '1px solid var(--line)', flexShrink: 0 }}>
+              <span className="display" style={{ fontSize: '1.25rem' }}>
                 Log Trade<em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>.</em>
               </span>
               <button onClick={onClose} style={{ background: 'none', border: 'none', color: 'var(--ink-3)', cursor: 'pointer' }}>
@@ -151,7 +151,7 @@ export function LogTradePanel({ open, onClose }: Props) {
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} style={{ flex: 1, padding: 24, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <form onSubmit={handleSubmit} style={{ flex: 1, padding: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1rem' }}>
               {/* Symbol */}
               <div>
                 <label style={labelStyle}>Symbol *</label>
@@ -161,14 +161,14 @@ export function LogTradePanel({ open, onClose }: Props) {
                     <option key={s.symbol} value={s.symbol}>{s.symbol} — {s.name}</option>
                   ))}
                 </select>
-                {errors.symbol && <p style={{ color: 'var(--down)', fontSize: 11, marginTop: 3 }}>{errors.symbol}</p>}
+                {errors.symbol && <p style={{ color: 'var(--down)', fontSize: '0.6875rem', marginTop: '0.1875rem' }}>{errors.symbol}</p>}
               </div>
 
               {/* Signal suggestions */}
               {suggestions.length > 0 && (
                 <div>
                   <label style={{ ...labelStyle, color: 'var(--accent)' }}>From Signal (auto-fill)</label>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
                     {suggestions.map(s => (
                       <button
                         key={s.id}
@@ -177,13 +177,13 @@ export function LogTradePanel({ open, onClose }: Props) {
                         style={{
                           background: form.signalId === s.id ? 'color-mix(in srgb, var(--accent) 12%, transparent)' : 'var(--bg)',
                           border: `1px solid ${form.signalId === s.id ? 'var(--accent)' : 'var(--line)'}`,
-                          borderRadius: 8, padding: '8px 12px', cursor: 'pointer',
+                          borderRadius: '0.5rem', padding: '0.5rem 0.75rem', cursor: 'pointer',
                           display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-                          color: 'var(--ink)', fontSize: 13,
+                          color: 'var(--ink)', fontSize: '0.8125rem',
                         }}
                       >
                         <span className="mono">{formatIDR(s.price)}</span>
-                        <span style={{ color: 'var(--ink-2)', fontSize: 11 }}>{Math.round(s.confidence)}% · {formatDate(s.generatedAt)}</span>
+                        <span style={{ color: 'var(--ink-2)', fontSize: '0.6875rem' }}>{Math.round(s.confidence)}% · {formatDate(s.generatedAt)}</span>
                       </button>
                     ))}
                   </div>
@@ -191,16 +191,16 @@ export function LogTradePanel({ open, onClose }: Props) {
               )}
 
               {/* Lot + Entry Price row */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div>
                   <label style={labelStyle}>Lot *</label>
                   <input type="number" min="1" step="1" value={form.lot} onChange={e => set('lot', e.target.value)} placeholder="e.g. 10" style={inputStyle} />
-                  {errors.lot && <p style={{ color: 'var(--down)', fontSize: 11, marginTop: 3 }}>{errors.lot}</p>}
+                  {errors.lot && <p style={{ color: 'var(--down)', fontSize: '0.6875rem', marginTop: '0.1875rem' }}>{errors.lot}</p>}
                 </div>
                 <div>
                   <label style={labelStyle}>Entry Price *</label>
                   <input type="number" min="1" step="any" value={form.entryPrice} onChange={e => set('entryPrice', e.target.value)} placeholder="e.g. 9350" style={inputStyle} />
-                  {errors.entryPrice && <p style={{ color: 'var(--down)', fontSize: 11, marginTop: 3 }}>{errors.entryPrice}</p>}
+                  {errors.entryPrice && <p style={{ color: 'var(--down)', fontSize: '0.6875rem', marginTop: '0.1875rem' }}>{errors.entryPrice}</p>}
                 </div>
               </div>
 
@@ -208,20 +208,20 @@ export function LogTradePanel({ open, onClose }: Props) {
               <div>
                 <label style={labelStyle}>Entry Date *</label>
                 <input type="date" value={form.entryDate} onChange={e => set('entryDate', e.target.value)} style={inputStyle} />
-                {errors.entryDate && <p style={{ color: 'var(--down)', fontSize: 11, marginTop: 3 }}>{errors.entryDate}</p>}
+                {errors.entryDate && <p style={{ color: 'var(--down)', fontSize: '0.6875rem', marginTop: '0.1875rem' }}>{errors.entryDate}</p>}
               </div>
 
               {/* TP + SL row */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                 <div>
                   <label style={labelStyle}>Take Profit</label>
                   <input type="number" min="1" step="any" value={form.takeProfit} onChange={e => set('takeProfit', e.target.value)} placeholder="optional" style={inputStyle} />
-                  {errors.takeProfit && <p style={{ color: 'var(--down)', fontSize: 11, marginTop: 3 }}>{errors.takeProfit}</p>}
+                  {errors.takeProfit && <p style={{ color: 'var(--down)', fontSize: '0.6875rem', marginTop: '0.1875rem' }}>{errors.takeProfit}</p>}
                 </div>
                 <div>
                   <label style={labelStyle}>Stop Loss</label>
                   <input type="number" min="1" step="any" value={form.stopLoss} onChange={e => set('stopLoss', e.target.value)} placeholder="optional" style={inputStyle} />
-                  {errors.stopLoss && <p style={{ color: 'var(--down)', fontSize: 11, marginTop: 3 }}>{errors.stopLoss}</p>}
+                  {errors.stopLoss && <p style={{ color: 'var(--down)', fontSize: '0.6875rem', marginTop: '0.1875rem' }}>{errors.stopLoss}</p>}
                 </div>
               </div>
 
@@ -242,7 +242,7 @@ export function LogTradePanel({ open, onClose }: Props) {
                 type="submit"
                 className="btn"
                 disabled={isPending}
-                style={{ width: '100%', padding: '12px 0', fontSize: 14, opacity: isPending ? 0.6 : 1, marginTop: 4 }}
+                style={{ width: '100%', padding: '0.75rem 0', fontSize: '0.875rem', opacity: isPending ? 0.6 : 1, marginTop: '0.25rem' }}
               >
                 {isPending ? 'Logging…' : 'Log Trade'}
               </button>

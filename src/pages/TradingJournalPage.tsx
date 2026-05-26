@@ -28,17 +28,17 @@ export default function TradingJournalPage() {
   }
 
   return (
-    <div style={{ padding: '32px 28px', maxWidth: 1200, margin: '0 auto' }}>
+    <div style={{ padding: '2rem 1.75rem', maxWidth: '75rem', margin: '0 auto' }}>
       {/* Header */}
-      <div className="pg-head" style={{ marginBottom: 24 }}>
+      <div className="pg-head" style={{ marginBottom: '1.5rem' }}>
         <div>
-          <h1 className="display" style={{ fontSize: 28, lineHeight: 1 }}>
+          <h1 className="display" style={{ fontSize: '1.75rem', lineHeight: 1 }}>
             Journal<em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>.</em>
           </h1>
-          <p style={{ color: 'var(--ink-2)', fontSize: 13, marginTop: 4 }}>Manual trade log · sharia universe</p>
+          <p style={{ color: 'var(--ink-2)', fontSize: '0.8125rem', marginTop: '0.25rem' }}>Manual trade log · sharia universe</p>
         </div>
         <div className="pg-actions">
-          <button className="btn" style={{ display: 'flex', alignItems: 'center', gap: 6 }} onClick={() => setLogOpen(true)}>
+          <button className="btn" style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }} onClick={() => setLogOpen(true)}>
             <Plus size={15} />
             Log Trade
           </button>
