@@ -1,4 +1,4 @@
-import type { IndicatorSnapshot } from './backtest'
+import type { IndicatorSnapshot, GenericStrategyConfigDTO } from './backtest'
 
 export type SignalType = 'BUY' | 'SELL' | 'SKIP'
 export type SignalStatus = 'active' | 'expired' | 'executed'
@@ -52,6 +52,7 @@ export interface TriggerAnalyzeRequest {
   useTrailingStop: boolean
   trailingStopPct: number
   entryTiming: string
+  strategyConfig?: GenericStrategyConfigDTO
 }
 
 export interface TriggerAnalyzeResponse {

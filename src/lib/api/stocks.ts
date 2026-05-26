@@ -13,6 +13,5 @@ export interface StockListResponse {
 }
 
 export async function getStocks(): Promise<StockListResponse> {
-  if (apiClient.useMock) return apiClient.mock.getStocks()
   return apiClient.get<StockListResponse>('/stocks')
 }

@@ -44,6 +44,7 @@ export const queryKeys = {
     summary: ['trades', 'summary'] as const,
   },
   publicBacktests: {
+    list: ['public', 'backtests', 'list'] as const,
     detail: (id: string) => ['public', 'backtests', 'detail', id] as const,
   },
   publicCandles: {

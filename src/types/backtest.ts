@@ -65,21 +65,6 @@ export const DEFAULT_GENERIC_STRATEGY: GenericStrategyConfigDTO = {
   trailingStopPct: 1.5,
 }
 
-export interface TriggerPublicBacktestRequest {
-  startDate: string
-  endDate: string
-  minConfidence: number
-  initialCapital: number
-  monthlyAddition: number
-  dcaDay: number
-  enableHoldDays?: boolean
-  enableAdminFee: boolean
-  enableSlippage: boolean
-  entryTiming: string
-  compositeIndex: string
-  monthlyProfitCapPct: number
-  strategyConfig: GenericStrategyConfigDTO
-}
 
 export interface BacktestAggregate {
   initialCapital: number
@@ -176,25 +161,28 @@ export interface PublicBacktestJobResponse {
 }
 
 export interface TriggerBacktestRequest {
-  strategyName: string
-  timeframe: string
+  // private-only fields (not required for public/unauthenticated runs)
+  strategyName?: string
+  timeframe?: string
+  useTrailingStop?: boolean
+  trailingStopPct?: number
+  holdDays?: number
+  useATRFilter?: boolean
+  runName?: string
+  // shared fields
   startDate: string
   endDate: string
   minConfidence: number
-  useTrailingStop: boolean
-  trailingStopPct: number
   enableAdminFee: boolean
   enableSlippage: boolean
   enableHoldDays: boolean
-  holdDays: number
-  useATRFilter: boolean
   initialCapital: number
   monthlyAddition: number
   dcaDay: number
   entryTiming: string
   compositeIndex: string
   monthlyProfitCapPct: number
-  runName?: string
+  strategyConfig?: GenericStrategyConfigDTO
 }
 
 export type BacktestWorkflowStatus = 'pending' | 'running' | 'completed' | 'failed' | 'cancelled'

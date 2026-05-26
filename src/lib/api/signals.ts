@@ -8,7 +8,6 @@ import type {
 } from '@/types/signal'
 
 export async function getSignals(params: SignalFilterParams): Promise<SignalListResponse> {
-  if (apiClient.useMock) return apiClient.mock.getSignals(params)
   return apiClient.get<SignalListResponse>('/signals', params as Record<string, unknown>)
 }
 
@@ -17,7 +16,6 @@ export async function triggerAnalyze(req: TriggerAnalyzeRequest): Promise<Trigge
 }
 
 export async function getMarketStatus(symbol = '^JKSE'): Promise<MarketStatusResponse> {
-  if (apiClient.useMock) return apiClient.mock.getMarketStatus(symbol)
   return apiClient.get<MarketStatusResponse>('/signals/market-status', { symbol })
 }
 
