@@ -10,6 +10,74 @@ import { formatIDR, formatNumber, formatDate } from '@/lib/utils'
 import type { PublicBacktestResult, GenericStrategyConfigDTO } from '@/types/backtest'
 import type { PublicSignalParams } from '@/lib/idb'
 
+// Hardcoded demo result — shown when workflowId === 'demo' (used for portfolio embed)
+const DEMO_RESULT: PublicBacktestResult = {
+  metadata: {
+    id: 'demo',
+    strategy: 'Generic Parametric',
+    timeframe: '1d',
+    startDate: '2023-12-29',
+    endDate: '2026-05-18',
+    source: 'grid_search',
+  },
+  aggregate: {
+    initialCapital: 500_000,
+    totalInvested: 15_000_000,
+    finalCapital: 31_397_940,
+    netProfit: 16_397_940,
+    roiPct: 109.32,
+    totalTrades: 71,
+    winningTrades: 41,
+    losingTrades: 30,
+    winRatePct: 57.69,
+    avgWin: 760_000,
+    avgLoss: 495_000,
+    largestWin: 2_100_000,
+    largestLoss: 980_000,
+    profitFactor: 2.10,
+    sharpeRatio: 0.408,
+    maxDrawdownPct: 8.31,
+  },
+  capitalHistory: [
+    { period: 0,  date: '2023-12-29', capital: 500_000 },
+    { period: 1,  date: '2024-01-29', capital: 1_080_000 },
+    { period: 2,  date: '2024-02-29', capital: 1_960_000 },
+    { period: 3,  date: '2024-03-29', capital: 2_890_000 },
+    { period: 4,  date: '2024-04-29', capital: 3_620_000 },
+    { period: 5,  date: '2024-05-29', capital: 4_130_000 },
+    { period: 6,  date: '2024-06-29', capital: 3_850_000 },
+    { period: 7,  date: '2024-07-29', capital: 4_600_000 },
+    { period: 8,  date: '2024-08-29', capital: 5_850_000 },
+    { period: 9,  date: '2024-09-29', capital: 7_300_000 },
+    { period: 10, date: '2024-10-29', capital: 8_900_000 },
+    { period: 11, date: '2024-11-29', capital: 10_400_000 },
+    { period: 12, date: '2024-12-29', capital: 11_800_000 },
+    { period: 13, date: '2025-01-29', capital: 12_900_000 },
+    { period: 14, date: '2025-02-28', capital: 14_100_000 },
+    { period: 15, date: '2025-03-29', capital: 15_500_000 },
+    { period: 16, date: '2025-04-29', capital: 14_250_000 },
+    { period: 17, date: '2025-05-29', capital: 15_700_000 },
+    { period: 18, date: '2025-06-29', capital: 17_300_000 },
+    { period: 19, date: '2025-07-29', capital: 19_200_000 },
+    { period: 20, date: '2025-08-29', capital: 20_600_000 },
+    { period: 21, date: '2025-09-29', capital: 21_900_000 },
+    { period: 22, date: '2025-10-29', capital: 23_200_000 },
+    { period: 23, date: '2025-11-29', capital: 24_700_000 },
+    { period: 24, date: '2025-12-29', capital: 25_900_000 },
+    { period: 25, date: '2026-01-29', capital: 26_300_000 },
+    { period: 26, date: '2026-02-28', capital: 27_600_000 },
+    { period: 27, date: '2026-03-29', capital: 29_000_000 },
+    { period: 28, date: '2026-04-29', capital: 30_300_000 },
+    { period: 29, date: '2026-05-18', capital: 31_397_940 },
+  ],
+}
+
+const DEMO_SIGNAL_PARAMS: PublicSignalParams = {
+  compositeIndex: '^JKSE',
+  minConfidence: 65,
+  entryTiming: 'next_day_open',
+}
+
 function ParamGrid({ rows }: { rows: { label: string; value: string }[] }) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem', marginTop: '1rem' }}>
@@ -30,16 +98,16 @@ function ParamGrid({ rows }: { rows: { label: string; value: string }[] }) {
 export default function PublicBacktestPage() {
   const { workflowId = '' } = useParams<{ workflowId: string }>()
   const { state } = usePublicBacktest()
-  const [detail, setDetail] = useState<PublicBacktestResult | null>(null)
+  const [detail, setDetail] = useState<PublicBacktestResult | null>(workflowId === 'demo' ? DEMO_RESULT : null)
   const [strategyConfig, setStrategyConfig] = useState<GenericStrategyConfigDTO | null>(null)
-  const [signalParams, setSignalParams] = useState<PublicSignalParams | null>(null)
-  const [loading, setLoading] = useState(true)
+  const [signalParams, setSignalParams] = useState<PublicSignalParams | null>(workflowId === 'demo' ? DEMO_SIGNAL_PARAMS : null)
+  const [loading, setLoading] = useState(workflowId !== 'demo')
 
   const isActiveJob = state.workflowId === workflowId
   const inProgress = isActiveJob && !['idle', 'done', 'error', 'expired'].includes(state.phase)
 
   useEffect(() => {
-    if (!workflowId) { setLoading(false); return }
+    if (workflowId === 'demo' || !workflowId) { setLoading(false); return }
     getPublicBacktestEntry(workflowId).then(entry => {
       if (entry) {
         setDetail(prev => prev ?? entry.result)
